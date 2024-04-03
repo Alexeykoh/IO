@@ -125,7 +125,7 @@ export class IOElement {
         this.elementLink = element;
     }
 
-    protected render() {
+    render() {
         // new element
         const createdElement = document.createElement(this._tag);
 
@@ -133,11 +133,18 @@ export class IOElement {
         this.createText(createdElement);
         this.createClassList(createdElement);
         this.createAttributes(createdElement);
-        this.createAttributes(createdElement);
+        this.createEventList(createdElement);
 
         // create link for DOM
         this.createElementLink(createdElement);
 
-        console.log('elementLink', this.elementLink);
+        // console.log('elementLink', this.elementLink);
+    }
+    getElement() {
+        if (this.elementLink) {
+            return this.elementLink;
+        } else {
+            throw new Error('"this.elementLink" cannot be empty!!!');
+        }
     }
 }
