@@ -28,3 +28,4 @@ root.route('main');
 setTimeout(() => {
     root.route('second');
 }, 1000);
+
