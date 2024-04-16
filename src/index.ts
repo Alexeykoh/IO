@@ -1,8 +1,12 @@
-import { IOElement } from './IO/io-element';
+import { IO } from './IO/IO';
 
-const test = new IOElement({ tag: 'p', text: 'hello world' });
-test.render();
+function Root() {
+    const io = new IO({ tag: 'div' });
+    const [text, setText] = io.state<string>('hello world');
+    io.text = text;
+    io.components = [() => new IO({ tag: 'p', text: text })];
+    console.log(io);
+    return io;
+}
 
-document.body.appendChild(test.getElement());
-
-console.log(test);
+document.body.appendChild(Root().get());
