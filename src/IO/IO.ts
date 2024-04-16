@@ -61,7 +61,6 @@ export class IO extends IOData {
         this._state.set(key, init);
 
         const refetch = () => {
-            console.log('start fetch');
             queryPromise
                 .then((res) => {
                     this._state.set(key, res);

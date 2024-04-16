@@ -13,7 +13,6 @@ function SecondPage() {
     return io;
 }
 
-console.log();
 const pages: iPages<'main' | 'second'>[] = [
     { name: 'main', page: MainPge },
     { name: 'second', page: SecondPage },
