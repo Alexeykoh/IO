@@ -20,7 +20,7 @@ export class IOState extends IOCore {
     private onNotify(data: IO) {
         if (data) {
             const componentInDOM = this.getRef(data.elementID);
-            const newComponent = data.get();
+            const newComponent = data.render();
             componentInDOM?.replaceWith(newComponent);
         }
     }

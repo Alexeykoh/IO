@@ -1,5 +1,5 @@
 import { IO } from '../IO';
-import { iElementorRoot } from './types.io';
+import { iIORoot } from './types.io';
 
 export interface iPages<T> {
     name: T;
@@ -13,7 +13,7 @@ export class IORoot<routerLink> {
     public layout: ((rootComponent: () => IO) => IO) | null;
     private layoutComponent: IO | null;
 
-    constructor({ rootElement }: iElementorRoot) {
+    constructor({ rootElement }: iIORoot) {
         this.rootElement = rootElement;
         this._rootComponent = null;
         this._pages = null;
@@ -42,9 +42,9 @@ export class IORoot<routerLink> {
         if (this.layout) {
             const layout = this.layout(element);
             this.layoutComponent = layout;
-            this.rootElement.appendChild(layout.get());
+            this.rootElement.appendChild(layout.render());
         } else {
-            this.rootElement.appendChild(element().get());
+            this.rootElement.appendChild(element().render());
         }
     }
 
