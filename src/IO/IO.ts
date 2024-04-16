@@ -1,12 +1,12 @@
 import { IOData } from './libs/data.io';
 import { Hydration } from './libs/hydration.io';
-import { iIO, iStateQueryCallbacks, tGetState, tSetState } from './libs/types.io';
+import { _components, _tag, iIO, iStateQueryCallbacks, tGetState, tSetState } from './libs/types.io';
 
 export class IO extends IOData {
     private _hydration: Hydration;
 
-    constructor(props: iIO) {
-        super(props);
+    constructor(tag: _tag, props?: iIO, children?: _components) {
+        super(tag, props, children);
         this._hydration = new Hydration();
     }
 

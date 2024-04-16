@@ -6,7 +6,7 @@ export type qStateLoading = () => void;
 
 export type IOArray = (() => IO)[];
 
-enum tag {
+export enum tag {
     DIV = 'div',
     H1 = 'h1',
     H2 = 'h2',
@@ -61,7 +61,7 @@ export type _text = (() => string) | string;
 export type _inner = string | null;
 
 export interface iIO {
-    tag: _tag;
+    tag?: _tag;
     classList?: _classList;
     id?: _id;
     events?: _events;
@@ -79,6 +79,7 @@ export interface iQueryStatus<T> {
 }
 export interface iIORoot {
     rootElement: HTMLElement;
+    rootComponent: (() => IO) | null;
 }
 
 export interface iPage {

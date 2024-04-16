@@ -1,17 +1,31 @@
 import { IO } from './IO/IO';
+import { IORoot, iPages } from './IO/libs/root.io';
+import { tag } from './IO/libs/types.io';
 
-const mockFetch = new Promise<string>((res, rej) => {
-    setTimeout(() => {
-        res('hello world 222');
-    }, 1000);
-});
-
-function Root() {
-    const io = new IO({ tag: 'div' });
-    const { data } = io.stateQuery<string>('hello world', mockFetch);
-    io.components = [() => new IO({ tag: 'p', text: data })];
-
+function MainPge() {
+    const io = new IO(tag.SECTION);
+    io.text = 'page_1';
+    return io;
+}
+function SecondPage() {
+    const io = new IO(tag.SECTION);
+    io.text = 'page_2';
     return io;
 }
 
-document.body.appendChild(Root().render());
+console.log();
+const pages: iPages<'main' | 'second'>[] = [
+    { name: 'main', page: MainPge },
+    { name: 'second', page: SecondPage },
+];
+
+const root = new IORoot({
+    rootElement: document.body,
+    rootComponent: () => new IO(tag.MAIN),
+});
+root.pages(pages);
+root.route('main');
+
+setTimeout(() => {
+    root.route('second');
+}, 1000);

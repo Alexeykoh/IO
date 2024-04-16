@@ -1,24 +1,24 @@
-import { IO } from '../IO';
-import { IOCore } from './core.io';
-import { Observer } from './observer.io';
-import { stateElementor } from './state.io';
+import { IO } from '../IO/IO';
+import { IOCore } from '../IO/libs/core.io';
+import { Observer } from '../IO/libs/observer.io';
+import { stateElementor } from '../IO/libs/state.io';
 
-import { _atr, _children, _classList, _components, _events, _id, _inner, _tag, _text, iIO } from './types.io';
+import { IOArray, iIO } from '../IO/libs/types.io';
 
-export class IOData extends IOCore {
-    public tag: _tag;
-    public classList?: _classList;
-    public id?: _id;
-    public events?: _events;
-    public atr?: _atr;
-    protected children?: _children;
-    public components?: _components;
-    public text?: _text;
-    protected _inner: _inner;
+export class _IODataOld extends IOCore {
+    public tag?: string;
+    public classList?: ((() => string) | string)[];
+    public id?: (number | string) | (() => string | number);
+    public events?: { [key: string]: (e?: Event) => void };
+    public atr?: { [key: string]: (() => string) | string };
+    protected children?: IO[];
+    public components?: IOArray | (() => IOArray);
+    public text?: (() => string) | string;
     public elementID: string;
     protected elementRef: HTMLElement | null;
     protected _state: Map<string, unknown>;
     protected $stateElementor: Observer<IO>;
+    protected _inner: string | null;
 
     constructor(props: iIO) {
         super();

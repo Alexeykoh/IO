@@ -13,9 +13,9 @@ export class IORoot<routerLink> {
     public layout: ((rootComponent: () => IO) => IO) | null;
     private layoutComponent: IO | null;
 
-    constructor({ rootElement }: iIORoot) {
+    constructor({ rootElement, rootComponent }: iIORoot) {
         this.rootElement = rootElement;
-        this._rootComponent = null;
+        this._rootComponent = rootComponent;
         this._pages = null;
         this.layout = null;
         this.layoutComponent = null;
@@ -23,6 +23,7 @@ export class IORoot<routerLink> {
 
     public pages(pagesList: iPages<routerLink>[]) {
         this._pages = pagesList;
+        this.start();
     }
     public route(link: routerLink) {
         if (this._pages) {
