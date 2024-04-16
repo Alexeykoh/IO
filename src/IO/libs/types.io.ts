@@ -1,11 +1,13 @@
 import { IO } from '../IO';
+
+// Types for managing state
 export type tGetState<T> = () => T;
 export type tSetState<T> = (value: T) => void;
 export type qStateErr = (err: Error) => void;
 export type qStateLoading = () => void;
 
+// Types for defining elements and components
 export type IOArray = (() => IO)[];
-
 export enum tag {
     DIV = 'div',
     H1 = 'h1',
@@ -57,9 +59,10 @@ export type _events = { [key: string]: (e?: Event) => void };
 export type _atr = { [key: string]: (() => string) | string };
 export type _children = IO[];
 export type _components = IOArray | (() => IOArray);
-export type _text = (() => string) | string;
+export type _text = (() => string | number) | (string | number);
 export type _inner = string | null;
 
+// Interface for describing an IO element
 export interface iIO {
     tag?: _tag;
     classList?: _classList;
@@ -72,20 +75,25 @@ export interface iIO {
     inner?: _inner;
 }
 
+// Interface for describing the status of a query
 export interface iQueryStatus<T> {
     data: () => T;
     loading: boolean;
     error: Error | null;
 }
+
+// Interface for describing the root element and component
 export interface iIORoot {
     rootElement: HTMLElement;
     rootComponent: (() => IO) | null;
 }
 
+// Interface for describing a page
 export interface iPage {
     [key: string]: () => IO;
 }
 
+// Interface for describing callbacks for state queries
 export interface iStateQueryCallbacks<T> {
     ok?: (res: T) => void;
     error?: (err: Error) => void;

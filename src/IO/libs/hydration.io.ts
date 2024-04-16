@@ -2,6 +2,7 @@ import { IO } from '../IO';
 import { _atr, _children, _classList, _components, _events, _id, _inner, _text, iIO } from './types.io';
 
 export class Hydration {
+    // Method to set class list for an HTML element
     private setClassList(element: HTMLElement, classList: _classList | undefined) {
         classList?.forEach((el) => {
             if (typeof el !== 'function') {
@@ -13,17 +14,14 @@ export class Hydration {
         });
     }
 
+    // Method to set ID for an HTML element
     private setID(element: HTMLElement, id: _id | undefined) {
         if (id) {
             element.id = id?.toString() as string;
         }
     }
 
-    // private create(): HTMLElement {
-    //     const newElement: HTMLElement = document.createElement(this.tag);
-    //     return newElement;
-    // }
-
+    // Method to set events for an HTML element
     private setEvents(element: HTMLElement, events: _events | undefined) {
         for (const key in events) {
             const eventKey = key;
@@ -33,12 +31,14 @@ export class Hydration {
         }
     }
 
+    // Method to set children for an HTML element
     private setChildren(element: HTMLElement, children: _children | undefined) {
         children?.forEach((el: IO) => {
             element.appendChild(el.render());
         });
     }
 
+    // Method to set components for an HTML element
     private setComponents(element: HTMLElement, components: _components | undefined) {
         if (typeof components === 'function') {
             components().forEach((el: () => IO) => {
@@ -53,16 +53,18 @@ export class Hydration {
         }
     }
 
+    // Method to set text content for an HTML element
     private setText(element: HTMLElement, text: _text | undefined) {
         if (text) {
-            if (typeof text === 'string') {
-                element.innerHTML = text;
+            if (typeof text === 'string' || typeof text === 'number') {
+                element.innerHTML = text.toString();
             } else {
-                element.innerHTML = text();
+                element.innerHTML = text().toString();
             }
         }
     }
 
+    // Method to set attributes for an HTML element
     private setAtr(element: HTMLElement, atr: _atr | undefined) {
         for (const key in atr) {
             const atrKey = key;
@@ -75,10 +77,12 @@ export class Hydration {
         }
     }
 
+    // Method to set component ID for an HTML element
     private setComponentId(element: HTMLElement, elementID: string | undefined) {
         element.dataset.componentId = elementID;
     }
 
+    // Method to set inner HTML content for an HTML element
     private setInner(element: HTMLElement, _inner: _inner | undefined) {
         if (_inner) {
             element.innerHTML = _inner;
@@ -87,13 +91,17 @@ export class Hydration {
         }
     }
 
+    // Main method to hydrate an HTML element with provided props
     public hydrate(element: HTMLElement, props: iIO, elementID: string, elementRef: HTMLElement | null) {
         const { classList, id, events, text, children, components, inner, atr } = props;
 
+        // Set properties for the element
         this.setComponentId(element, elementID);
         this.setClassList(element, classList);
         this.setID(element, id);
         this.setEvents(element, events);
+
+        // Set inner content based on provided props
         if (inner) {
             this.setInner(element, inner);
         } else {
@@ -101,8 +109,11 @@ export class Hydration {
             this.setChildren(element, children);
             this.setComponents(element, components);
         }
+
+        // Set attributes for the element
         this.setAtr(element, atr);
 
+        // Assign the element reference
         elementRef = element;
         return element;
     }

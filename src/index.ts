@@ -2,6 +2,35 @@ import { IO } from './IO/IO';
 import { IORoot, iPages } from './IO/libs/root.io';
 import { tag } from './IO/libs/types.io';
 
+// counter
+function Counter() {
+    const io = new IO(tag.DIV);
+    const [counter, setCounter] = io.state<number>(0);
+    io.components = [
+        () =>
+            new IO(tag.BUTTON, {
+                text: '+++',
+                events: {
+                    click: () => {
+                        setCounter(counter() + 1);
+                    },
+                },
+            }),
+        () => new IO(tag.DIV, { text: counter }),
+        () =>
+            new IO(tag.BUTTON, {
+                text: '---',
+                events: {
+                    click: () => {
+                        setCounter(counter() - 1);
+                    },
+                },
+            }),
+    ];
+    return io;
+}
+
+// pages
 function MainPge() {
     const io = new IO(tag.SECTION);
     io.text = 'page_1';
@@ -10,6 +39,7 @@ function MainPge() {
 function SecondPage() {
     const io = new IO(tag.SECTION);
     io.text = 'page_2';
+    io.components = [Counter];
     return io;
 }
 
@@ -28,4 +58,3 @@ root.route('main');
 setTimeout(() => {
     root.route('second');
 }, 1000);
-

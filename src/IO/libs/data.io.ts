@@ -6,6 +6,7 @@ import { stateElementor } from './state.io';
 import { _atr, _children, _classList, _components, _events, _id, _inner, _tag, _text, iIO } from './types.io';
 
 export class IOData extends IOCore {
+    // Represents a base class for creating IO elements with data management capabilities
     public tag: _tag;
     public classList?: _classList;
     public id?: _id;
@@ -20,8 +21,12 @@ export class IOData extends IOCore {
     protected _state: Map<string, unknown>;
     protected $stateElementor: Observer<IO>;
 
+    // Constructor for creating an IOData instance
     constructor(tag: _tag, props?: iIO, children?: _components) {
+        // Call the constructor of the parent class (IOCore)
         super();
+
+        // Initialize instance properties
         this.tag = tag;
         this.classList = props?.classList;
         this.id = props?.id;
@@ -30,23 +35,16 @@ export class IOData extends IOCore {
         this.children = props?.children;
         this.components = children;
         this.text = props?.text;
-        this.elementID = this.getID();
-        this.elementRef = null;
-        this._inner = null;
-        this._state = new Map();
+        this.elementID = this.getID(); // Generate a unique element ID
+        this.elementRef = null; // Reference to the HTML element associated with this instance
+        this._inner = null; // Inner HTML content of the element
+        this._state = new Map(); // Map to store state data associated with this instance
 
+        // Subscribe to the global state observer
         this.$stateElementor = stateElementor.subscribe();
     }
-    public getID() {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let result = '';
-        const charactersLength = characters.length;
-        for (let i = 0; i < 10; i++) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
-        return result;
-    }
 
+    // Setter for the inner HTML content of the element
     set inner(value: string) {
         this._inner = value;
     }
