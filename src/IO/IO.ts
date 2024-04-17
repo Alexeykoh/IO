@@ -19,21 +19,8 @@ export class IO extends IOData {
 
     // Render the IO element
     public render() {
-        const resultElement = this.create(); // Create the element
-        const props: iIO = {
-            // Gather properties for the element
-            classList: this.classList,
-            tag: this.tag,
-            id: this.id,
-            events: this.events,
-            atr: this.atr,
-            text: this.text,
-            inner: this._inner,
-            children: this.children,
-            components: this.components,
-        };
         // Hydrate the element with props and return
-        const readyElement = this._hydration.hydrate(resultElement, props, this.elementID, this.elementRef);
+        const readyElement = this._hydration.hydrate(this);
         return readyElement;
     }
 

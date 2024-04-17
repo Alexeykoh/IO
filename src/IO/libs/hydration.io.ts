@@ -1,7 +1,13 @@
 import { IO } from '../IO';
-import { _atr, _children, _classList, _components, _events, _id, _inner, _text, iIO } from './types.io';
+import { _atr, _classList, _components, _events, _id, _tag, _text } from './types.io';
 
 export class Hydration {
+    // Create and return a new HTMLElement
+    private create(tag: _tag): HTMLElement {
+        const newElement: HTMLElement = document.createElement(tag);
+        return newElement;
+    }
+
     // Method to set class list for an HTML element
     private setClassList(element: HTMLElement, classList: _classList | undefined) {
         classList?.forEach((el) => {
@@ -29,13 +35,6 @@ export class Hydration {
 
             element.addEventListener(eventKey, eventAction);
         }
-    }
-
-    // Method to set children for an HTML element
-    private setChildren(element: HTMLElement, children: _children | undefined) {
-        children?.forEach((el: IO) => {
-            element.appendChild(el.render());
-        });
     }
 
     // Method to set components for an HTML element
@@ -82,39 +81,22 @@ export class Hydration {
         element.dataset.componentId = elementID;
     }
 
-    // Method to set inner HTML content for an HTML element
-    private setInner(element: HTMLElement, _inner: _inner | undefined) {
-        if (_inner) {
-            element.innerHTML = _inner;
-        } else {
-            throw new Error('"setInner": _inner cannot be empty or null');
-        }
-    }
-
     // Main method to hydrate an HTML element with provided props
-    public hydrate(element: HTMLElement, props: iIO, elementID: string, elementRef: HTMLElement | null) {
-        const { classList, id, events, text, children, components, inner, atr } = props;
+    public hydrate(_node: IO) {
+        const { classList, id, events, text, components, inner, atr, tag, elementID } = _node;
+        const element = this.create(tag);
 
         // Set properties for the element
         this.setComponentId(element, elementID);
         this.setClassList(element, classList);
         this.setID(element, id);
         this.setEvents(element, events);
-
-        // Set inner content based on provided props
-        if (inner) {
-            this.setInner(element, inner);
-        } else {
-            this.setText(element, text);
-            this.setChildren(element, children);
-            this.setComponents(element, components);
-        }
+        this.setText(element, text);
+        // this.setComponents(element, components);
 
         // Set attributes for the element
         this.setAtr(element, atr);
 
-        // Assign the element reference
-        elementRef = element;
         return element;
     }
 }
