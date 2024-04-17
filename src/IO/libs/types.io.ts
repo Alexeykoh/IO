@@ -59,6 +59,7 @@ export type _events = { [key: string]: (e?: Event) => void };
 export type _atr = { [key: string]: (() => string) | string };
 export type _children = IO[];
 export type _components = IOArray | (() => IOArray);
+export type nodes = IO[];
 export type _text = (() => string | number) | (string | number);
 export type _inner = string | null;
 

@@ -3,17 +3,17 @@ import { iIORoot } from './types.io';
 
 // Represents a page configuration with a name and its corresponding page component
 export interface iPages<T> {
-    name: T;                // Name of the page
-    page: () => IO;         // Function returning the page component
+    name: T; // Name of the page
+    page: () => IO; // Function returning the page component
 }
 
 // Represents the root element and its associated components and pages
 export class IORoot<routerLink> {
-    public rootElement: HTMLElement;            // Root HTML element to render components
-    private _rootComponent: (() => IO) | null;  // Function returning the root component
+    public rootElement: HTMLElement; // Root HTML element to render components
+    private _rootComponent: (() => IO) | null; // Function returning the root component
     private _pages: iPages<routerLink>[] | null; // List of available pages
     public layout: ((rootComponent: () => IO) => IO) | null; // Function to wrap components in a layout
-    private layoutComponent: IO | null;         // Layout component
+    private layoutComponent: IO | null; // Layout component
 
     // Constructor for creating an instance of IORoot
     constructor({ rootElement, rootComponent }: iIORoot) {
@@ -63,6 +63,31 @@ export class IORoot<routerLink> {
             this.render(this._rootComponent); // Render the root component
         } else {
             throw Error('_rootComponent cannot be empty'); // Throw an error if root component is not set
+        }
+    }
+}
+
+export class Root {
+    _rootNode: IO;
+    _rootElement: HTMLElement;
+
+    constructor(rootNode: IO, rootElement: HTMLElement) {
+        this._rootNode = rootNode;
+        this._rootElement = rootElement;
+    }
+
+    render() {
+        console.log('[_rootNode]', this._rootNode);
+        rec(this._rootNode, this._rootElement);
+        function rec(_node: IO, _el: HTMLElement) {
+            const element = _node.render();
+            _el.appendChild(element);
+            const children = _node.nodes;
+            if (children?.length) {
+                children.forEach((child) => {
+                    rec(child, element);
+                });
+            }
         }
     }
 }

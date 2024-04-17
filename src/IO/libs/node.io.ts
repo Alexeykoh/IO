@@ -3,21 +3,22 @@ import { IOCore } from './core.io';
 import { Observer } from './observer.io';
 import { stateElementor } from './state.io';
 
-import { _atr, _children, _classList, _components, _events, _id, _inner, _tag, _text, iIO } from './types.io';
+import { _atr, _children, _classList, _components, _events, _id, _inner, _tag, _text, iIO, nodes } from './types.io';
 
-export class IOData extends IOCore {
+export class IONode extends IOCore {
     // Represents a base class for creating IO elements with data management capabilities
     public tag: _tag;
     public classList?: _classList;
     public id?: _id;
     public events?: _events;
     public atr?: _atr;
-    protected children?: _children;
     public components?: _components;
+    public nodes?: nodes;
     public text?: _text;
-    protected _inner: _inner;
     public elementID: string;
-    protected elementRef: HTMLElement | null;
+
+    protected _inner: _inner;
+    protected children?: _children;
     protected _state: Map<string, unknown>;
     protected $stateElementor: Observer<IO>;
 
@@ -34,9 +35,9 @@ export class IOData extends IOCore {
         this.atr = props?.atr;
         this.children = props?.children;
         this.components = children;
+        this.nodes = [];
         this.text = props?.text;
         this.elementID = this.getID(); // Generate a unique element ID
-        this.elementRef = null; // Reference to the HTML element associated with this instance
         this._inner = null; // Inner HTML content of the element
         this._state = new Map(); // Map to store state data associated with this instance
 

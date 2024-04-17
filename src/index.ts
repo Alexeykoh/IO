@@ -1,60 +1,73 @@
 import { IO } from './IO/IO';
-import { IORoot, iPages } from './IO/libs/root.io';
+import { Root } from './IO/libs/root.io';
 import { tag } from './IO/libs/types.io';
 
-// counter
-function Counter() {
+interface iToDo {
+    text: string;
+}
+type ToDo = iToDo[];
+
+const mockList: ToDo = [{ text: 'hello world' }, { text: 'minecraft is my life!' }];
+const mockList_2: ToDo = [{ text: 'hello world' }, { text: 'minecraft is my life!' }, { text: 'BISC rule!' }];
+
+const root = new Root(StartPage(), document.body);
+root.render();
+
+function StartPage() {
+    const io = new IO(tag.SECTION);
+    io.nodes = [ToDoComponent()];
+    return io;
+}
+
+function ToDoComponent() {
     const io = new IO(tag.DIV);
-    const [counter, setCounter] = io.state<number>(0);
-    io.components = [
-        () =>
-            new IO(tag.BUTTON, {
-                text: '+++',
-                events: {
-                    click: () => {
-                        setCounter(counter() + 1);
-                    },
-                },
-            }),
-        () => new IO(tag.DIV, { text: counter }),
-        () =>
-            new IO(tag.BUTTON, {
-                text: '---',
-                events: {
-                    click: () => {
-                        setCounter(counter() - 1);
-                    },
-                },
-            }),
-    ];
+    const [todo, setTodo] = io.signal<ToDo>(mockList);
+    io.nodes = todo().map((el) => {
+        return ListItem(el.text);
+    });
+
+    setTimeout(() => {
+        setTodo(mockList_2);
+    }, 1000);
+
     return io;
 }
 
-// pages
-function MainPge() {
-    const io = new IO(tag.SECTION);
-    io.text = 'page_1';
-    return io;
-}
-function SecondPage() {
-    const io = new IO(tag.SECTION);
-    io.text = 'page_2';
-    io.components = [Counter];
+function Form() {
+    const io = new IO(tag.FORM);
+    io.nodes = [FormInput(), FormButton()];
     return io;
 }
 
-const pages: iPages<'main' | 'second'>[] = [
-    { name: 'main', page: MainPge },
-    { name: 'second', page: SecondPage },
-];
+function List(todo: () => ToDo) {
+    const io = new IO(tag.UL);
+    io.nodes = todo().map((el) => {
+        return ListItem(el.text);
+    });
+    return io;
+}
 
-const root = new IORoot({
-    rootElement: document.body,
-    rootComponent: () => new IO(tag.MAIN),
+function ListItem(text: string) {
+    const io = new IO(tag.LI);
+    io.text = text;
+    io.nodes = [];
+    return io;
+}
+
+function FormInput() {
+    const io = new IO(tag.INPUT);
+    io.nodes = [];
+    return io;
+}
+
+function FormButton() {
+    const io = new IO(tag.BUTTON);
+    io.text = 'add task';
+    io.nodes = [];
+    return io;
+}
+
+const kek = [FormInput, FormButton];
+kek.forEach((el) => {
+    console.log(el);
 });
-root.pages(pages);
-root.route('main');
-
-setTimeout(() => {
-    root.route('second');
-}, 1000);

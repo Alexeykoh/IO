@@ -1,39 +1,20 @@
-import { IOData } from './libs/data.io';
 import { Hydration } from './libs/hydration.io';
+import { IONode } from './libs/node.io';
 import { _components, _tag, iIO, iStateQueryCallbacks, tGetState, tSetState } from './libs/types.io';
 
 // IO class extends IOData
-export class IO extends IOData {
-    private _hydration: Hydration; // Instance of Hydration class
+export class IO extends IONode {
+    public _hydration: Hydration; // Instance of Hydration class
 
     constructor(tag: _tag, props?: iIO, children?: _components) {
         super(tag, props, children); // Call constructor of superclass
         this._hydration = new Hydration(); // Initialize Hydration instance
     }
 
-    // Create and return a new HTMLElement
-    private create(): HTMLElement {
-        const newElement: HTMLElement = document.createElement(this.tag);
-        return newElement;
-    }
-
     // Render the IO element
     public render() {
-        const resultElement = this.create(); // Create the element
-        const props: iIO = {
-            // Gather properties for the element
-            classList: this.classList,
-            tag: this.tag,
-            id: this.id,
-            events: this.events,
-            atr: this.atr,
-            text: this.text,
-            inner: this._inner,
-            children: this.children,
-            components: this.components,
-        };
         // Hydrate the element with props and return
-        const readyElement = this._hydration.hydrate(resultElement, props, this.elementID, this.elementRef);
+        const readyElement = this._hydration.hydrate(this);
         return readyElement;
     }
 
@@ -99,5 +80,48 @@ export class IO extends IOData {
         };
 
         return { data, refetch }; // Return data and refetch functions
+    }
+
+    public signal<signalType>(init: signalType, update: boolean = true) {
+        const key = this.getID(); // Get unique identifier for state
+        this._state.set(key, init); // Initialize state with provided initial value
+
+        // Define setter function for state
+        const set = async (value: signalType) => {
+            console.log('set state');
+
+            this._state.set(key, value); // Set new value for state
+
+            const componentInDOM = this.getRef(this.elementID);
+            const componentInDOMCopy = componentInDOM.cloneNode(false);
+
+            // console.log('this.getRef(this.elementID)', this.getRef(this.elementID));
+
+            rec(this, componentInDOMCopy).then(() => {
+                componentInDOM.replaceWith(componentInDOMCopy);
+                console.log(componentInDOMCopy);
+            });
+        };
+
+        async function rec(_node: IO, _el: HTMLElement | Node) {
+            const element = _node.render();
+            const children = _node.nodes;
+            if (children?.length) {
+                children.forEach((child) => {
+                    const childElement = child.render();
+                    _el.appendChild(childElement);
+                    rec(child, element);
+                });
+            }
+            return _el;
+        }
+
+        // Define getter function for state
+        const get = () => {
+            console.log('get state');
+            return this._state.get(key); // Get current value of state
+        };
+
+        return [get, set] as [tGetState<signalType>, tSetState<signalType>]; // Return getter and setter
     }
 }

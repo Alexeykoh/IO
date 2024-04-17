@@ -14,7 +14,7 @@ The `IOData` class represents a base class for creating IO elements with data ma
 - `text?: _text`: Represents the text content of the element.
 - `_inner: _inner`: Represents the inner HTML content of the element.
 - `elementID: string`: Represents the unique ID of the element.
-- `elementRef: HTMLElement | null`: Represents the reference to the HTML element associated with this instance.
+associated with this instance.
 - `_state: Map<string, unknown>`: Represents the map to store state data associated with this instance.
 - `$stateElementor: Observer<IO>`: Represents the observer for global state changes.
 
