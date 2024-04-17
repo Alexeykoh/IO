@@ -11,12 +11,6 @@ export class IO extends IOData {
         this._hydration = new Hydration(); // Initialize Hydration instance
     }
 
-    // Create and return a new HTMLElement
-    private create(): HTMLElement {
-        const newElement: HTMLElement = document.createElement(this.tag);
-        return newElement;
-    }
-
     // Render the IO element
     public render() {
         // Hydrate the element with props and return

@@ -92,7 +92,7 @@ export class Hydration {
         this.setID(element, id);
         this.setEvents(element, events);
         this.setText(element, text);
-        // this.setComponents(element, components);
+        this.setComponents(element, components);
 
         // Set attributes for the element
         this.setAtr(element, atr);

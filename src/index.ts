@@ -27,6 +27,7 @@ function Counter() {
                 },
             }),
     ];
+    console.log(io);
     return io;
 }
 
@@ -53,8 +54,8 @@ const root = new IORoot({
     rootComponent: () => new IO(tag.MAIN),
 });
 root.pages(pages);
-root.route('main');
+root.route('second');
 
-setTimeout(() => {
-    root.route('second');
-}, 1000);
+// setTimeout(() => {
+//     root.route('second');
+// }, 1000);
