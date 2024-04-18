@@ -56,7 +56,7 @@ export type _tag = tag | string;
 export type _classList = ((() => string) | string)[];
 export type _id = (number | string) | (() => string | number);
 export type _events = { [key: string]: (e?: Event) => void };
-export type _atr = { [key: string]: (() => string) | string };
+export type _atr = { [key: string]: (() => string) | string | undefined };
 export type _children = IO[];
 export type _components = IOArray | (() => IOArray);
 export type _text = (() => string | number) | (string | number);

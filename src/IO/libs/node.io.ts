@@ -5,7 +5,7 @@ import { stateElementor } from './state.io';
 
 import { _atr, _children, _classList, _components, _events, _id, _inner, _tag, _text, iIO } from './types.io';
 
-export class IOData extends IOCore {
+export class IONode extends IOCore {
     // Represents a base class for creating IO elements with data management capabilities
     public tag: _tag;
     public classList?: _classList;

@@ -1,9 +1,12 @@
-import { IOData } from './libs/data.io';
+import { IONode } from './libs/node.io';
 import { Hydration } from './libs/hydration.io';
-import { _components, _tag, iIO, iStateQueryCallbacks, tGetState, tSetState } from './libs/types.io';
+import { _components, _tag, iIO, iStateQueryCallbacks, tGetState } from './libs/types.io';
+
+export type stateCallback<T> = (value: T) => T;
+export type new_tGetState<T> = (value: ((value: T) => T) | T) => void;
 
 // IO class extends IOData
-export class IO extends IOData {
+export class IO extends IONode {
     private _hydration: Hydration; // Instance of Hydration class
 
     constructor(tag: _tag, props?: iIO, children?: _components) {
@@ -24,15 +27,26 @@ export class IO extends IOData {
     }
 
     // Manage state of the element
-    public state<stateType>(init: stateType, update: boolean = true) {
+    public state<stateType>(init: stateType, update: boolean = true, callback?: (val: stateType) => void) {
         const key = this.getID(); // Get unique identifier for state
         this._state.set(key, init); // Initialize state with provided initial value
 
         // Define setter function for state
-        const set = (value: stateType) => {
-            this._state.set(key, value); // Set new value for state
+        const set = (value: (val: stateType) => stateType | stateType) => {
+            let result: stateType;
+
+            if (typeof value === 'function') {
+                result = value(this._state.get(key) as stateType);
+            } else {
+                result = value;
+            }
+
+            this._state.set(key, result); // Set new value for state
             if (update) {
                 this.$stateElementor.notify(this); // Notify state elementor for update
+            }
+            if (callback) {
+                callback(this._state.get(key) as stateType);
             }
         };
 
@@ -41,7 +55,7 @@ export class IO extends IOData {
             return this._state.get(key); // Get current value of state
         };
 
-        return [get, set] as [tGetState<stateType>, tSetState<stateType>]; // Return getter and setter
+        return [get, set] as [tGetState<stateType>, new_tGetState<stateType>]; // Return getter and setter
     }
 
     // Query state asynchronously

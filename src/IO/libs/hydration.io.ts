@@ -68,6 +68,9 @@ export class Hydration {
         for (const key in atr) {
             const atrKey = key;
             const atrValue = atr[key];
+            if (atrValue === undefined || atrValue === null) {
+                return;
+            }
             if (typeof atrValue === 'function') {
                 element.setAttribute(atrKey, atrValue());
             } else {
