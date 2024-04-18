@@ -2,7 +2,6 @@ import { IO } from './IO/IO';
 import { IOInput } from './IO/components/IOInput';
 import { IORoot, iPages } from './IO/libs/root.io';
 import { tag } from './IO/libs/types.io';
-import './style.scss';
 
 interface iTodo {
     id: number;
