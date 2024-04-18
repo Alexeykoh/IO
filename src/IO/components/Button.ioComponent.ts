@@ -8,6 +8,7 @@ interface iButtonIOComponent {
     classList?: _classList;
 }
 export function ButtonComponent(props: iButtonIOComponent) {
+    // !!! IN TEST 
     const { callback, text, type, classList } = props;
 
     const io = new IO(tag.BUTTON);

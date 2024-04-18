@@ -9,6 +9,7 @@ interface iLabelIOComponent {
     children?: _components;
 }
 export function LabelComponent(props: iLabelIOComponent) {
+    // !!! IN TEST
     const { classList, children } = props;
 
     const io = new IO(tag.INPUT);
@@ -17,4 +18,3 @@ export function LabelComponent(props: iLabelIOComponent) {
 
     return io;
 }
-

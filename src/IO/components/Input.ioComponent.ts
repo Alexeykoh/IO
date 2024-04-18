@@ -20,6 +20,7 @@ interface iInputIOComponent {
     validation?: 'name' | 'password' | 'email';
 }
 export function InputComponent(props: iInputIOComponent) {
+    // !!! IN TEST 
     const { callback, placeholder, value, classList, validation } = props;
 
     const io = new IO(tag.INPUT);
