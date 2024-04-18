@@ -32,6 +32,7 @@ export class IOState extends IOCore {
 
             // Render the new component
             const newComponent = data.render();
+            newComponent.focus();
 
             // Replace the existing component in the DOM with the new one
             componentInDOM?.replaceWith(newComponent);

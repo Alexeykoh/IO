@@ -86,7 +86,7 @@ export class Hydration {
 
     // Main method to hydrate an HTML element with provided props
     public hydrate(_node: IO) {
-        const { classList, id, events, text, components, inner, atr, tag, elementID } = _node;
+        const { classList, id, events, text, components, atr, tag, elementID } = _node;
         const element = this.create(tag);
 
         // Set properties for the element

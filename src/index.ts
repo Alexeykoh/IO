@@ -1,7 +1,8 @@
 import { IO } from './IO/IO';
-import { InputComponent } from './IO/components/Input.ioComponent';
+import { IOInput } from './IO/components/IOInput';
 import { IORoot, iPages } from './IO/libs/root.io';
 import { tag } from './IO/libs/types.io';
+import './style.scss';
 
 interface iTodo {
     id: number;
@@ -54,16 +55,10 @@ function Form(newTodo: (text: string) => void) {
 }
 
 function Input(input: (text: string) => void) {
-    // const io = new IO(tag.INPUT);
-    // io.events = {
-    //     input: (e) => {
-    //         const text = (e?.target as HTMLInputElement).value;
-    //         input(text);
-    //     },
-    // };
-    // return io;
-    
-    return InputComponent({callback: input,classList: ['todoInput']})
+    const io = new IOInput(tag.INPUT, {}, [], (value) => {
+        input(value);
+    });
+    return io;
 }
 
 function Button(submit: () => void) {
