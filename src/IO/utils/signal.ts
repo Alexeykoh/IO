@@ -1,9 +1,11 @@
+// v 1.0
+
 export interface iSignal<T> {
     value: T;
     effect: null | ((data: T) => void);
 }
 export function signal<T>(value: T) {
-    let proxy = new Proxy<iSignal<T>>(
+    const proxy = new Proxy<iSignal<T>>(
         { value: value, effect: null },
         {
             get(target, prop: keyof iSignal<T>) {
