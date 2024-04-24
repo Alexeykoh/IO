@@ -90,9 +90,3 @@ function Item(text: string) {
     return io;
 }
 
-function ItemItem(text: any) {
-    const io = new IO(tag.LI);
-    
-    io.text= ' lle';
-    return io;
-}
