@@ -1,6 +1,6 @@
 // ===== NODE =====
 
-import { CreateElement } from './libs/createtElement';
+import { CreateElement, UpdateElement } from './libs/createtElement';
 import { _attributeList, _children, _classList, _eventList, _params, _tag, _text } from './types/io.interface';
 
 export function getID() {
@@ -10,6 +10,7 @@ export function getID() {
     for (let i = 0; i < 10; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
+
     return result;
 }
 
@@ -33,9 +34,6 @@ export class IONode {
     private _snapshot: this;
 
     constructor(tag: _tag, params?: _params, children?: _children) {
-        //extra fields
-        this._id = getID();
-
         // tag fields
         this._tag = tag;
 
@@ -50,6 +48,9 @@ export class IONode {
 
         // snapshot
         this._snapshot = { ...this };
+
+        //extra fields
+        this._id = getID();
     }
 
     // id
@@ -114,31 +115,59 @@ export class IONode {
 
     //methods
     update() {
-        console.group('compare');
-        console.log('snapshot node', this._snapshot);
-        console.log('new node', this);
-        console.groupEnd();
-
-        const elementInDOM = document.getElementById(this._id);
-        const newElement = CreateElement(this);
-
-        const recursion = (_node: IONode, _element: HTMLElement) => {
-            const children = _node.children;
+        console.group('[update]');
+        const recursion = (_node: IONode) => {
+            console.warn('[update/rec/hl]: start recursion in', _node.tag, _node.id, _node);
+            const parentElement = document.getElementById(_node._id);
+            if (!parentElement) {
+                return;
+            }
+            console.log(`[update/rec/hl - ${_node.tag}]: update high level element`);
+            UpdateElement(_node, parentElement as HTMLElement);
+            const children = _node._children;
 
             if (children.length) {
-                children.forEach((child) => {
-                    const childElement = CreateElement(child);
-                    _element.appendChild(childElement);
+                const sliceChildren = children;
+                const childNode = parentElement.children;
+                const newParentElement = document.getElementById(_node._id);
+                console.log('[find parent element]', _node._tag, newParentElement?.childNodes);
+                console.log(`[update/rec/hl - ${_node.tag}]: element has ${children.length} IO children`);
+                console.log(`[update/rec/hl - ${_node.tag}]: element has ${childNode.length} childNodes`);
 
-                    recursion(child, childElement);
+                console.log(`[update/rec/child - ${_node.tag}]: list of IO children: `, children);
+                console.log(`[update/rec/child - ${_node.tag}]: list of childNodes: `, childNode);
+
+                console.group(`[update/rec/hl - ${_node.tag}]: start children iteration`);
+
+                sliceChildren.forEach((child, ind) => {
+                    console.log(`[update/rec/child - ${child.tag}]: child info`, ind, child.tag, childNode[ind], child);
+                    if (childNode[ind] && sliceChildren) {
+                        UpdateElement(child, childNode[ind] as HTMLElement);
+                        console.log(
+                            `%c [update/rec/child - ${child.tag}]: update current element`,
+                            'background: orange; color: black',
+                            child.tag
+                        );
+                    } else {
+                        const newChild = CreateElement(child);
+                        console.log(
+                            `%c [update/rec/child - ${child.tag}]: create new element`,
+                            'background: pink; color: black',
+                            child.tag,
+                            newChild
+                        );
+                        parentElement.appendChild(newChild);
+                    }
+                    console.log(`[update/rec/child]: init new recursion`);
+                    recursion(child);
                 });
+                console.groupEnd();
             }
         };
 
-        recursion(this, newElement);
-        elementInDOM?.replaceWith(newElement);
-
+        recursion(this);
         this._snapshot = { ...this };
+        console.groupEnd();
     }
 }
 
