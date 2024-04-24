@@ -1,76 +1,62 @@
-import { IONode, Root } from './IO/IONode';
+import { IO } from './IO/IO';
+import { Root } from './IO/IONode';
 import { iSignal, signal } from './IO/libs/Signal';
 import { tag } from './IO/types/enums.enum';
 
-interface iTasks {
-    text: string;
+interface iList {
+    id: number;
+    count: number;
 }
 // ===== EXAMPLE =====
-const root = new Root(ToDo(), document.body);
+const root = new Root(EditableList(), document.body);
 console.log(root);
 root.render();
 
-function ToDo() {
-    const taskList = signal<iTasks[]>([{ text: 'test task' }]);
-    const io = new IONode(tag.DIV, {}, []);
-    io.children = [TaskList(taskList), TodoForm(taskList)];
-
+function EditableList() {
+    const list = signal<iList[]>([{ count: 0, id: Date.now() }]);
+    function createNew() {
+        list.value = [...list.value, { count: 0, id: Date.now() }];
+    }
+    const io = new IO(tag.DIV);
+    io.children = [List(list), Button('create new', createNew)];
     return io;
 }
 
-function TaskList(list: iSignal<iTasks[]>) {
-    const io = new IONode(tag.UL);
+function List(list: iSignal<iList[]>) {
+    const io = new IO(tag.UL);
+    function increase(id: number) {
+        list.value = list.value.map((el) => {
+            if (el.id === id) {
+                return { ...el, count: el.count + 1 };
+            } else {
+                return el;
+            }
+        });
+    }
     list.effect = (data) => {
-        console.log('list.effect', data);
-        io.children = [
-            ...list.value.map((el) => {
-                return TaskItem(el.text);
-            }),
-        ];
+        io.children = data.map((el) => {
+            return Item(el, increase);
+        });
     };
     return io;
 }
 
-function TaskItem(text: string) {
-    const io = new IONode(tag.LI);
+function Item(props: iList, increase: (id: number) => void) {
+    const io = new IO(tag.LI);
+    io.attributeList = { title: props.id.toString() };
+    io.text = props.count.toString();
+    io.children = [
+        Button('increase', () => {
+            increase(props.id);
+        }),
+    ];
+    return io;
+}
+
+function Button(text: string, event: () => void) {
+    const io = new IO(tag.BUTTON);
     io.text = text;
-    return io;
-}
-
-function TodoForm(list: iSignal<iTasks[]>) {
-    const io = new IONode(tag.FORM);
-    const inputHandler = signal<string>('');
-    io.children = [FormInput(inputHandler), FormButton()];
-    io.eventList = {
-        submit: (e) => {
-            e?.preventDefault();
-            list.value = [...list.value, { text: inputHandler.value }];
-            inputHandler.value = '';
-        },
-    };
-    return io;
-}
-
-function FormInput(inputHandler: iSignal<string>) {
-    const io = new IONode(tag.INPUT);
-
-    inputHandler.effect = (data) => {
-        if (!data) {
-            io.attributeList = { ...io.attributeList, value: data };
-        }
-    };
-    io.eventList = {
-        input: (e) => {
-            const target = e?.target as HTMLInputElement;
-            inputHandler.value = target.value;
-        },
-    };
-    return io;
-}
-
-function FormButton() {
-    const io = new IONode(tag.BUTTON);
-    io.text = 'add task';
-    io.attributeList = { type: 'submit' };
+    io.children = [];
+    io.eventList = { click: event };
     return io;
 }
