@@ -34,6 +34,9 @@ function ToDo() {
     }
 
     const io = new IO(tag.SECTION);
+    io.subscribe('666', (data) => {
+        console.log('subscribe', data);
+    });
     const [todo, setTodo] = io.state<ToDo>(mockToDo);
     io.components = [() => Form(newTodo), () => List(todo())];
     return io;
@@ -48,6 +51,7 @@ function Form(newTodo: (text: string) => void) {
     }
 
     const io = new IO(tag.DIV);
+    io.subscribe('666');
     const [input, setInput] = io.state<string>('new todo', false);
     io.components = [() => Input(inputHandler), () => Button(submitHandler)];
     return io;
@@ -65,6 +69,7 @@ function Button(submit: () => void) {
     io.text = 'add new';
     io.events = {
         click: () => {
+            io.notify('666', 'lel');
             submit();
         },
     };
@@ -80,6 +85,12 @@ function List(todo: ToDo) {
 }
 
 function Item(text: string) {
+    const io = new IO(tag.LI);
+    io.text = text;
+    return io;
+}
+
+function ItemItem(text: any) {
     const io = new IO(tag.LI);
     io.text = text;
     return io;
