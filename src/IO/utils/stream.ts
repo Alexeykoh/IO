@@ -1,3 +1,5 @@
+// v 1.1
+
 // Define the interface for a subscriber
 interface iSubscriber<T> {
     id: string; // Unique identifier for the subscriber
@@ -21,7 +23,7 @@ export class Stream<T> {
 
     // Method to notify subscribers with a message
     public notify(message: T) {
-        this.subscribers.forEach(({ id, subscriber }) => {
+        this.subscribers.forEach(({ subscriber }) => {
             subscriber.effect(message); // Call the effect method of each subscriber
         });
     }
@@ -29,6 +31,9 @@ export class Stream<T> {
     // Method to subscribe a new subscriber
     public subscribe(subscriber: iSubscriber<T>) {
         this.subscribers.push(subscriber); // Add the subscriber to the subscribers array
+        if (this.subscribers.length >= 50) {
+            this.subscribers.shift();
+        }
     }
 
     // Method to unsubscribe a subscriber by ID
@@ -36,6 +41,9 @@ export class Stream<T> {
         this.subscribers = this.subscribers.filter((el) => {
             return el.id !== id; // Filter out the subscriber with the specified ID
         });
+    }
+    public clearSubscribers() {
+        this.subscribers = [];
     }
 }
 
