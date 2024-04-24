@@ -1,5 +1,7 @@
 import { IO } from '../IO';
 import { Observer } from '../utils/observer.io';
+import { Stream, StreamSubscriber } from '../utils/stream';
+import { $IOStream, iStreamMessage } from './IOStream';
 import { IOCore } from './core.io';
 import { stateElementor } from './state.io';
 
@@ -12,14 +14,17 @@ export class IONode extends IOCore {
     public id?: _id;
     public events?: _events;
     public atr?: _atr;
-    protected children?: _children;
+    public elementID: string;
     public components?: _components;
     public text?: _text;
+
+    protected children?: _children;
     protected _inner: _inner;
-    public elementID: string;
     protected elementRef: HTMLElement | null;
     protected _state: Map<string, unknown>;
     protected $stateElementor: Observer<IO>;
+    protected $subscriber: StreamSubscriber<iStreamMessage> | null;
+    protected _$stream: Stream<iStreamMessage>;
 
     // Constructor for creating an IOData instance
     constructor(tag: _tag, props?: iIO, children?: _components) {
@@ -42,6 +47,10 @@ export class IONode extends IOCore {
 
         // Subscribe to the global state observer
         this.$stateElementor = stateElementor.subscribe();
+
+        // stream
+        this._$stream = $IOStream;
+        this.$subscriber = null;
     }
 
     // Setter for the inner HTML content of the element
