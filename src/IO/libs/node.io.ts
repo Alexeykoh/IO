@@ -1,6 +1,6 @@
 import { IO } from '../IO';
+import { Observer } from '../utils/observer.io';
 import { IOCore } from './core.io';
-import { Observer } from './observer.io';
 import { stateElementor } from './state.io';
 
 import { _atr, _children, _classList, _components, _events, _id, _inner, _tag, _text, iIO } from './types.io';

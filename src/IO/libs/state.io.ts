@@ -1,6 +1,6 @@
 import { IO } from '../IO'; // Importing IO interface
+import { Observable, Observer } from '../utils/observer.io'; // Importing Observable and Observer classes
 import { IOCore } from './core.io'; // Importing IOCore class
-import { Observable, Observer } from './observer.io'; // Importing Observable and Observer classes
 
 // Represents the state management for IO components
 export class IOState extends IOCore {
