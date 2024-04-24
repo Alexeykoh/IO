@@ -1,6 +1,8 @@
+import { $IOStream, iStreamMessage } from './libs/IOStream';
 import { Hydration } from './libs/hydration.io';
 import { IONode } from './libs/node.io';
 import { _components, _tag, iIO, iStateQueryCallbacks, tGetState } from './libs/types.io';
+import { StreamSubscriber } from './utils/stream';
 
 export type stateCallback<T> = (value: T) => T;
 export type new_tGetState<T> = (value: ((value: T) => T) | T) => void;
@@ -94,5 +96,22 @@ export class IO extends IONode {
         };
 
         return { data, refetch }; // Return data and refetch functions
+    }
+
+    // subscribe to global stream
+    public subscribe<T>(id: string, effect?: (data: T) => void) {
+        this.$subscriber = new StreamSubscriber<iStreamMessage>(this._$stream, (message) => {
+            if (message.id === id) {
+                if (effect) {
+                    effect(message.data as T);
+                }
+                this.forceUpdate();
+            }
+        });
+    }
+
+    // notify global stream
+    public notify<T>(id: string, data?: T) {
+        $IOStream.notify({ id: id, data: data });
     }
 }
