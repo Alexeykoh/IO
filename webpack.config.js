@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const DotenvWebpackPlugin = require('dotenv-webpack');
+const { devServer } = require('./webpack.dev.config.js');
 
 const baseConfig = {
     entry: path.resolve(__dirname, './src/index.ts'),
@@ -27,6 +28,7 @@ const baseConfig = {
     output: {
         filename: 'index.js',
         path: path.resolve(__dirname, './dist'),
+        publicPath: '/',
     },
     plugins: [
         new DotenvWebpackPlugin(),

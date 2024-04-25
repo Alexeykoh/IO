@@ -4,6 +4,16 @@ module.exports = {
     mode: 'development',
     devtool: 'inline-source-map',
     devServer: {
-        static: path.resolve(__dirname, './dist'),
+        static: {
+            directory: path.resolve(__dirname, './dist'),
+        },
+        historyApiFallback: {
+            rewrites: [
+                { from: /^\/subpage/, to: '/index.html' },
+                { from: /./, to: '/index.html' },
+            ],
+        },
+        compress: true,
+        port: 8080,
     },
 };
