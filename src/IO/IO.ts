@@ -1,7 +1,7 @@
-import { $IOStream, iStreamMessage } from './libs/IOStream';
-import { Hydration } from './libs/hydration.io';
-import { IONode } from './libs/node.io';
-import { _components, _tag, iIO, iStateQueryCallbacks, tGetState } from './libs/types.io';
+import { $IOStream, iStreamMessage } from './libs/modules/IOStream';
+import { Hydration } from './libs/modules/hydration.io';
+import { IONode } from './libs/modules/node.io';
+import { _components, _tag, iIO, iStateQueryCallbacks, tGetState } from './libs/modules/types.io';
 import { StreamSubscriber } from './utils/stream';
 
 export type stateCallback<T> = (value: T) => T;

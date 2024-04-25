@@ -1,5 +1,5 @@
 import { IO } from '../IO';
-import { _components, iIO } from '../libs/types.io';
+import { _components, iIO } from '../libs/modules/types.io';
 
 export class IOInput extends IO {
     private _callback: ((value: string) => void) | undefined;

@@ -24,6 +24,13 @@ export interface iRoute {
 export interface iIORouter {
     root?: HTMLElement;
     auth?: () => boolean;
+    middleware?: (data: iMiddlewareData) => void;
     domain: `http://${string}` | `https://${string}`;
     routes: iRoutes;
+}
+
+export interface iMiddlewareData {
+    domain: string;
+    routes: [string, Route][];
+    href: path;
 }

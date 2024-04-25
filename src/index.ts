@@ -2,7 +2,7 @@ import { IO } from './IO/IO';
 import { IORouter } from './IO/libs/router/router.io';
 import { iRoutes } from './IO/libs/router/types/types';
 
-import { tag } from './IO/libs/types.io';
+import { tag } from './IO/libs/modules/types.io';
 
 const routes: iRoutes = [
     { name: 'Main', path: '/', template: () => new IO(tag.DIV, { text: 'main' }, []) },
@@ -22,13 +22,12 @@ new IORouter({
     root: document.body,
     domain: 'http://localhost:8080',
     routes: routes,
+    auth: () => {
+        return true;
+    },
+    middleware: (data) => {
+        console.log('middleware', data);
+    },
 });
 
-// const navigator = router.navigate;
-
-// function LinkButton() {
-//     const io = new IO(tag.BUTTON);
-//     io.events = { click: () => [navigator('/category/bicycle')] };
-//     io.text = 'route => /category/bicycle';
-//     return io;
-// }
+//export const navigator = root.navigate;
