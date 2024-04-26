@@ -10,24 +10,25 @@ const routes: iRoutes = [
     {
         name: 'Products',
         path: '/products/[id]',
-        template: (data) =>
+        template: (id) =>
             new IO(tag.DIV, {
-                text: 'products: ' + data,
+                text: 'products: ' + id,
             }),
     },
     { name: 'Admin', path: '/admin', template: () => new IO(tag.DIV, { text: 'admin' }), params: { isPrivate: true } },
 ];
+
+
 
 new IORouter({
     root: document.body,
     domain: 'http://localhost:8080',
     routes: routes,
     auth: () => {
-        return true;
+        return false;
     },
     middleware: (data) => {
         console.log('middleware', data);
     },
 });
 
-//export const navigator = root.navigate;
