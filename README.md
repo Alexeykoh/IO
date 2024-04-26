@@ -15,9 +15,9 @@ Lightweight component factory implementation with reactive primitives, state man
 
 > `<IO/>`- a set of functions and classes of native JavaScript ES6 / TypeScript. This approach allows you to limitlessly expand the functionality and use the `<IO/>`as regular Javascript code
 
-### 🚦 Signals
+### 📻 Sreams
 
-> The Signal simplifies handling asynchronous data fetching and provides a clean way to manage loading, error, and success states of the asynchronous operation.
+> A mechanism for reactively sending messages (data) to subscribers, built on the basis of the “Observer” pattern.
 
 ### 🍕 Ready Declarative Components / RDC
 
@@ -36,12 +36,12 @@ Lightweight component factory implementation with reactive primitives, state man
 
 ## Development stages:
 
- - [ ] IO Element
- - [ ] IO Component
- - [ ] IO Component Render Core
- - [ ] State
- - [ ] Signals
- - [ ] Routing / Router
+ - [X] IO Element
+ - [X] IO Component
+ - [X] IO Component Render Core
+ - [X] State
+ - [X] Streams
+ - [X] Routing / Router
  - [ ] AsyncState
  - [ ] CashedState
  - [ ] LocalStorage provider
