@@ -1,6 +1,6 @@
-import { IO } from '../../IO';
 import { Observer } from '../../utils/observer.io';
 import { Stream, StreamSubscriber } from '../../utils/stream';
+import { IO } from './IO';
 import { $IOStream, iStreamMessage } from './IOStream';
 import { IOCore } from './core.io';
 import { stateElementor } from './state.io';

@@ -1,4 +1,4 @@
-import { IO } from '../../IO';
+import { IO } from './IO';
 
 // Types for managing state
 export type tGetState<T> = () => T;

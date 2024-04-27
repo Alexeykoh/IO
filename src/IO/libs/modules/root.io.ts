@@ -1,4 +1,4 @@
-import { IO } from '../../IO';
+import { IO } from './IO';
 import { iIORoot } from './types.io';
 
 // Represents a page configuration with a name and its corresponding page component
