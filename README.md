@@ -1,3 +1,5 @@
+
+
 # What is `<IO/>` ?
 Lightweight component factory implementation with reactive primitives, state management, routing and asynchronous data loading.
 
@@ -34,7 +36,7 @@ Lightweight component factory implementation with reactive primitives, state man
 
 > Routing allows you to use Page Templates and change them through switching functions like in SPA libraries.
 
-## Development stages:
+## 📃 Development stages:
 
  - [X] IO Element
  - [X] IO Component
@@ -48,3 +50,7 @@ Lightweight component factory implementation with reactive primitives, state man
  - [ ] IO Component Update Core
  - [ ] IO Computed queue
  - [ ] RDC
+
+## 🧑‍💻 Developers:
+ - [Alexeykoh](https://github.com/Alexeykoh)
+ - [kiriotis](https://github.com/kiriotis)
