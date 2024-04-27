@@ -1,4 +1,4 @@
-import { IO } from '../../../../IO';
+import { IO } from '../../../modules/IO';
 import { tag } from '../../../modules/types.io';
 import { LoginSection } from './_ui/_loginSection';
 import { RegistrationSection } from './_ui/_registrationSection';
