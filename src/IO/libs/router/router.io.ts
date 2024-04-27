@@ -1,8 +1,8 @@
-import { IO } from '../../IO';
-import { tag } from '../modules/types.io';
+import { IO } from '../modules/IO';
+import { Page404 } from './404/404.page';
 import { IOAuthPage } from './authentication/auth-page/auth-page.io';
 import { Route } from './routes/route.io';
-import { iIORouter, iMiddlewareData, iRoute, iRoutes, path, routeIO, routerMap } from './types/types';
+import { iIORouter, iRoute, iRoutes, layoutTemplate, middleware, path, routeIO, routerMap } from './types/types';
 
 // Define a class called IORouter
 export class IORouter {
@@ -14,19 +14,21 @@ export class IORouter {
     private readonly _href: path; // Current path
     private readonly _routesMap: routerMap; // Map of routes
     private readonly _404: Route; // Route for 404 page
-    public _middleware: ((data: iMiddlewareData) => void) | undefined; // Middleware function
+    private readonly _layout: layoutTemplate; // Layout function
+    public _middleware: middleware; // Middleware function
 
     // Constructor for the IORouter class
     constructor(params: iIORouter) {
-        // Initialize the 404 route
-        this._404 = new Route(() => new IO(tag.SECTION, { text: '404 page' }), '/', {}, '404');
-
         // Initialize parameters
         this._root = params.root || document.body;
         this._domain = params.domain;
         this._routes = params.routes;
         this._routesMap = new Map();
+        this._layout = params.layout || undefined;
         this._href = this.editPath(window.location.href);
+
+        // Initialize the 404 route
+        this._404 = new Route(() => Page404(this.navigate), '/', {}, '404');
 
         // Initialize authentication route and method
         this._authRoute = new Route(() => IOAuthPage(), '/auth', {}, 'io-auth');
@@ -37,10 +39,10 @@ export class IORouter {
 
         // Add root authentication route
         this.addRootAuthRoute();
+        this.addRoot404Route();
 
         // Add routes to the map and load the current page
         this.addRoutesToMap();
-        this.loadPage(this._href);
     }
 
     // Getter for the domain property
@@ -62,6 +64,11 @@ export class IORouter {
     private addRootAuthRoute() {
         if (!this._routesMap.has('/auth')) {
             this._routesMap.set('/auth', this._authRoute);
+        }
+    }
+    private addRoot404Route() {
+        if (!this._routesMap.has('/404')) {
+            this._routesMap.set('/404', this._404);
         }
     }
 
@@ -105,8 +112,13 @@ export class IORouter {
 
     // Private method to render the page
     private renderPage(ioNode: IO) {
-        const ioElement = ioNode.render();
         this._root.innerHTML = '';
+        let ioElement: HTMLElement;
+        if (this._layout) {
+            ioElement = this._layout([() => ioNode]).render();
+        } else {
+            ioElement = ioNode.render();
+        }
         this._root.appendChild(ioElement);
     }
 
@@ -152,12 +164,7 @@ export class IORouter {
                 }
             });
             if (!dynRoute || !id || !findParams) {
-                const routeNode = this._404;
-                const ioNode = routeNode.io('404');
-                document.title = this._404.name;
-                this.middleware(routeNode, ioNode, () => {
-                    this.renderPage(ioNode);
-                });
+                this.navigate('/404');
             } else {
                 const routeNode = dynRoute.routeNode;
                 const ioNode = routeNode.io(id);
@@ -180,5 +187,9 @@ export class IORouter {
     public navigate(path: path) {
         window.location.href = path;
         this.loadPage(path);
+    }
+
+    public init() {
+        this.loadPage(this._href);
     }
 }

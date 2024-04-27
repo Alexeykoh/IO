@@ -1,4 +1,4 @@
-import { IO } from '../IO';
+import { IO } from '../libs/modules/IO';
 import { _components, iIO } from '../libs/modules/types.io';
 
 export class IOInput extends IO {

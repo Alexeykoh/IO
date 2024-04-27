@@ -1,5 +1,5 @@
-import { IO } from '../../IO'; // Importing IO interface
 import { Observable, Observer } from '../../utils/observer.io'; // Importing Observable and Observer classes
+import { IO } from './IO'; // Importing IO interface
 import { IOCore } from './core.io'; // Importing IOCore class
 
 // Represents the state management for IO components

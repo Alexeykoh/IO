@@ -1,4 +1,4 @@
-import { IO } from '../../../../../IO';
+import { IO } from '../../../../modules/IO';
 import { tag } from '../../../../modules/types.io';
 
 export function Label(title: string, children: (() => IO)[]) {
