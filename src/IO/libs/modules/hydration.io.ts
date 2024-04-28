@@ -1,4 +1,4 @@
-import { IO } from '../../IO';
+import { IO } from './IO';
 import { _atr, _classList, _components, _events, _id, _tag, _text } from './types.io';
 
 export class Hydration {

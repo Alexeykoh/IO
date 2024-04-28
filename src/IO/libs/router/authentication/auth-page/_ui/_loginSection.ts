@@ -1,4 +1,4 @@
-import { IO } from '../../../../../IO';
+import { IO } from '../../../../modules/IO';
 import { tag } from '../../../../modules/types.io';
 import { Form } from './_form';
 import { Input } from './_input';
