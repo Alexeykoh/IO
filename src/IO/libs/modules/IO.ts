@@ -17,10 +17,9 @@ export class IO extends IONode {
     }
 
     // Render the IO element
-    public render() {
+    public render(): HTMLElement {
         // Hydrate the element with props and return
-        const readyElement = this._hydration.hydrate(this);
-        return readyElement;
+        return this._hydration.hydrate(this);
     }
 
     // Force update the element
@@ -98,20 +97,25 @@ export class IO extends IONode {
         return { data, refetch }; // Return data and refetch functions
     }
 
-    // subscribe to global stream
-    public subscribe<T>(id: string, effect?: (data: T) => void) {
-        this.$subscriber = new StreamSubscriber<iStreamMessage>(this._$stream, (message) => {
-            if (message.id === id) {
-                if (effect) {
-                    effect(message.data as T);
+    // global stream
+    public stream<T>() {
+        // subscribe to global stream
+        const subscribe = (id: string, effect?: (data: T) => void) => {
+            this.$subscriber = new StreamSubscriber<iStreamMessage>(this._$stream, (message) => {
+                if (message.id === id) {
+                    if (effect) {
+                        effect(message.data as T);
+                    }
+                    this.forceUpdate();
                 }
-                this.forceUpdate();
-            }
-        });
-    }
-
-    // notify global stream
-    public notify<T>(id: string, data?: T) {
-        $IOStream.notify({ id: id, data: data });
+            });
+        };
+        // notify global stream
+        const notify = (id: string, data?: T) => {
+            $IOStream.notify({ id: id, data: data });
+        };
+        return { subscribe, notify };
     }
 }
+
+
