@@ -1,3 +1,3 @@
-import { APP } from './exampleApp/app';
+import { APP } from './example-app/app';
 
 APP();

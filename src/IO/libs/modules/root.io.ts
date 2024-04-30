@@ -1,5 +1,5 @@
-import { IO } from './IO';
-import { iIORoot } from './types.io';
+import { IO } from '../../IO';
+import { iIORoot } from '../types/types.io';
 
 // Represents a page configuration with a name and its corresponding page component
 export interface iPages<T> {
