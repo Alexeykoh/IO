@@ -189,6 +189,14 @@ export class IORouter {
         this.loadPage(path);
     }
 
+    public HistoryNext() {
+        history.forward();
+        console.log('next page');
+    }
+    public HistoryPrevios() {
+        history.back();
+        console.log('previos page');
+    }
     public init() {
         this.loadPage(this._href);
     }
