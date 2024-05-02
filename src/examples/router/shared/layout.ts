@@ -1,5 +1,5 @@
-import { IO } from '../../IO/IO';
-import { tag } from '../../IO/libs/types/types.io';
+import { IO } from '../../../IO/IO';
+import { tag } from '../../../IO/libs/types/types.io';
 import { Footer } from './footer';
 import { Header } from './header';
 

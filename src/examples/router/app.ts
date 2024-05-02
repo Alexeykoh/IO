@@ -1,5 +1,5 @@
-import { iConfig } from '../IO-Router/types/types';
-import { ioInit } from '../IO/libs/modules/root/root.io';
+import { iConfig } from '../../IO-Router/types/types';
+import { ioInit } from '../../IO/libs/modules/root/root.io';
 import { ioRoutes } from './routes.io';
 import { Layout } from './shared/layout';
 import { MockStoreServer } from './shared/mockData/mockStore';

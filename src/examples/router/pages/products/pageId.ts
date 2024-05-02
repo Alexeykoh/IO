@@ -1,5 +1,5 @@
-import { IO } from '../../../IO/IO';
-import { tag } from '../../../IO/libs/types/types.io';
+import { IO } from '../../../../IO/IO';
+import { tag } from '../../../../IO/libs/types/types.io';
 import { server } from '../../app';
 import { Badge } from '../../shared/UI/badge';
 import { Description } from '../../shared/UI/description';

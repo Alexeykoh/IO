@@ -1,6 +1,6 @@
-import { IO } from '../../../IO/IO';
-import { tag } from '../../../IO/libs/types/types.io';
-import { map } from '../../../IO/utils/map';
+import { IO } from '../../../../IO/IO';
+import { tag } from '../../../../IO/libs/types/types.io';
+import { map } from '../../../../IO/utils/map';
 import { server } from '../../app';
 import { Badge } from '../../shared/UI/badge';
 import { ButtonLink } from '../../shared/UI/button-link';

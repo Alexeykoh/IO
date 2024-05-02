@@ -1,4 +1,4 @@
-import { iRoutes } from '../IO-Router/types/types';
+import { iRoutes } from '../../IO-Router/types/types';
 import { AuthPage } from './pages/auth/page';
 import { MainPage } from './pages/main/page';
 import { ProductsPage } from './pages/products/page';
