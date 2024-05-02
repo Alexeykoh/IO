@@ -147,31 +147,23 @@ export class IORouter {
     // Private method to load a page
     private loadPage(path: path) {
         const page = this._routesMap.get(path);
-        if (!page) {
-            console.log('page not found', path.split('/'));
 
-            const pathSplit = path.split('/');
-            const findParams = pathSplit[1];
-            const id = pathSplit[pathSplit.length - 1];
+        if (!page) {
             const arrayOfRoutes = Array.from(this._routesMap.keys());
-            let dynRoute: { routeNode: Route; id: string } | undefined;
-            arrayOfRoutes.forEach((el) => {
-                if (el.includes(findParams)) {
-                    const data = this._routesMap.get(el);
-                    if (data) {
-                        dynRoute = { routeNode: data, id: id };
-                    }
+            if (
+                arrayOfRoutes.includes('/' + path.split('/')[1]) &&
+                arrayOfRoutes.includes('/' + path.split('/')[1] + '/[id]')
+            ) {
+                const routeNode = this._routesMap.get('/' + path.split('/')[1]+"/[id]");
+                if (routeNode) {
+                    const ioNode = routeNode.io(path.split('/')[2]);
+                    document.title = routeNode.name;
+                    this.middleware(routeNode, ioNode, () => {
+                        this.renderPage(ioNode);
+                    });
                 }
-            });
-            if (!dynRoute || !id || !findParams) {
-                this.navigate('/404');
             } else {
-                const routeNode = dynRoute.routeNode;
-                const ioNode = routeNode.io(id);
-                document.title = routeNode.name;
-                this.middleware(routeNode, ioNode, () => {
-                    this.renderPage(ioNode);
-                });
+                this.navigate('/404');
             }
         } else {
             const routeNode = page;
