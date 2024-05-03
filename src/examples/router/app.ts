@@ -15,6 +15,6 @@ export const rootConfig: iConfig = {
     layout: Layout,
 };
 
-export function APP() {
+export function AppRouter() {
     ioInit(rootConfig);
 }
