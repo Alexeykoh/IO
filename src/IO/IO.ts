@@ -1,8 +1,8 @@
 import { getID } from './libs/helpers/get-id';
 import { Hydration } from './libs/modules/hydration/hydration.module';
 import { ReRendering } from './libs/modules/re-rendering/re-rendering.module';
-import { StateModule } from './libs/modules/state/state.module';
 import { StateQueryModule } from './libs/modules/state-query/state-query.module';
+import { StateModule } from './libs/modules/state/state.module';
 import { StreamModule } from './libs/modules/stream/stream.module';
 import {
     _atr,
@@ -108,8 +108,8 @@ export class IO {
     }
 
     // module methods
-    public state<T>(init: T) {
-        return this._testStateModule.state(init, true);
+    public state<T>(init: T, isUpdate: boolean = true) {
+        return this._testStateModule.state(init, isUpdate);
     }
     public stateQuery<T>(init: T, promise: Promise<T>, callback?: iStateQueryCallbacks<T>) {
         return this._testStateQueryModule.stateQuery(init, promise, callback);
@@ -124,6 +124,7 @@ export class IO {
         // Hydrate the element with props and return
         return this._hydration.hydrate(this);
     }
+
     public forceUpdate() {
         // Force update the element
         const reRender = new ReRendering(this);
