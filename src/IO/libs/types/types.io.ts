@@ -2,15 +2,14 @@ import { IO } from '../../IO';
 
 // Types for managing state
 export type tGetState<T> = () => T;
-export type tSetState<T> = (value: T) => void;
+export type tSetState<T> = (value: ((value: T) => T) | T) => void;
+
 export type qStateErr = (err: Error) => void;
 export type qStateLoading = () => void;
 
 export type stateCallback<T> = (value: T) => T;
-export type new_tGetState<T> = (value: ((value: T) => T) | T) => void;
 
 // Types for defining elements and components
-export type IOArray = (() => IO)[];
 export enum tag {
     DIV = 'div',
     H1 = 'h1',
@@ -55,6 +54,7 @@ export enum tag {
     SVG = 'svg',
 }
 
+export type IOArray = (() => IO)[];
 export type _tag = tag | string;
 export type _classList = ((() => string) | string)[];
 export type _id = (number | string) | (() => string | number);
