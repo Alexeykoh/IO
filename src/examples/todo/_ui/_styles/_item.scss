@@ -1,0 +1,13 @@
+.todo-item {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    width: fit-content;
+    padding: 3px 12px;
+    border-radius: 8px;
+    transition-duration: 600ms;
+
+    &.complete {
+        background: lightseagreen;
+    }
+}

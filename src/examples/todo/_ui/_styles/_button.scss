@@ -1,0 +1,9 @@
+.todo-button {
+    border-radius: 8px;
+    border: none;
+    padding: 8px 16px;
+    transition-duration: 150ms;
+    &:hover {
+        scale: 1.1;
+    }
+}
