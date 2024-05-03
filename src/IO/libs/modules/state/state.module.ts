@@ -1,6 +1,6 @@
 import { IO } from '../../../IO';
 import { getID } from '../../helpers/get-id';
-import { new_tGetState, tGetState } from '../../types/types.io';
+import { tGetState, tSetState } from '../../types/types.io';
 import { ReRendering } from '../re-rendering/re-rendering.module';
 
 export class StateModule {
@@ -49,6 +49,6 @@ export class StateModule {
             return this._state.get(key); // Get current value of state
         };
 
-        return [get, set] as [tGetState<stateType>, new_tGetState<stateType>]; // Return getter and setter
+        return [get, set] as [tGetState<stateType>, tSetState<stateType>]; // Return getter and setter
     }
 }
