@@ -1,3 +1,6 @@
-import { APP } from './examples/router/app';
+import { AppTodo } from './examples/todo/app';
 
-APP();
+// uncomment that if you want to use router or something else
+
+// AppRouter();
+AppTodo();
