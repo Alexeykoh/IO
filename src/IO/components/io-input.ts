@@ -1,8 +1,6 @@
 import { IO } from '../IO';
 import { _components, iIO } from '../libs/types/types.io';
 
-
-
 export class IOInput extends IO {
     private _callback: ((value: string) => void) | undefined;
     constructor(
