@@ -2,8 +2,8 @@ import { IORouter } from '../libs/router/router.io';
 import { iConfig } from '../libs/router/types/types';
 
 let navigator: (path: `/${string}`) => void;
-let NextHIstorEvent: () => void;
-let PreviosHIstorEvent: () => void;
+let NextHistorEvent: () => void;
+let PreviosHistorEvent: () => void;
 export function navigate(path: `/${string}`) {
     if (navigator) {
         navigator(path);
@@ -13,12 +13,12 @@ export function navigate(path: `/${string}`) {
 }
 
 export function Historynavigate(vector: 'next' | 'back') {
-  console.log(history);
+    console.log(history);
     if (vector == 'back') {
-        PreviosHIstorEvent();
+        PreviosHistorEvent();
     }
     if (vector == 'next') {
-        NextHIstorEvent();
+        NextHistorEvent();
     }
 }
 
@@ -34,7 +34,7 @@ export function ioInit(config: iConfig) {
 
     // insert navigate
     navigator = router.navigate;
-    NextHIstorEvent = router.HistoryNext;
-    PreviosHIstorEvent = router.HistoryPrevios;
+    NextHistorEvent = router.HistoryNext;
+    PreviosHistorEvent = router.HistoryPrevios;
     router.init();
 }

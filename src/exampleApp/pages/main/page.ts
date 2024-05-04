@@ -11,7 +11,7 @@ function button_next() {
     const io = new IO(tag.BUTTON, { text: 'Next' }, []);
     io.events = {
         click: () => {
-            Historynavigate("next");
+            Historynavigate('next');
         },
     };
     return io;
@@ -20,7 +20,7 @@ function button_previos() {
     const io = new IO(tag.BUTTON, { text: 'previos' }, []);
     io.events = {
         click: () => {
-            Historynavigate("back");
+            Historynavigate('back');
         },
     };
     return io;

@@ -154,7 +154,7 @@ export class IORouter {
                 arrayOfRoutes.includes('/' + path.split('/')[1]) &&
                 arrayOfRoutes.includes('/' + path.split('/')[1] + '/[id]')
             ) {
-                const routeNode = this._routesMap.get('/' + path.split('/')[1]+"/[id]");
+                const routeNode = this._routesMap.get('/' + path.split('/')[1] + '/[id]');
                 if (routeNode) {
                     const ioNode = routeNode.io(path.split('/')[2]);
                     document.title = routeNode.name;
