@@ -13,11 +13,11 @@ export class Hydration {
         element.className = '';
 
         classList?.forEach((el) => {
-            if (typeof el !== 'function') {
-                element.classList.add(el.replace(/\s/g, ''));
-            } else {
-                const execClass = el();
-                element.classList.add(execClass.replace(/\s/g, ''));
+            let _class: string | undefined = typeof el !== 'function' ? el : el();
+            _class = _class.replace(/ /g, '');
+
+            if (_class) {
+                element.classList.add(_class);
             }
         });
     }
