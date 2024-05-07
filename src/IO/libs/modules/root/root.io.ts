@@ -1,9 +1,11 @@
 import { IORouter } from '../../../../IO-Router/router.io';
 import { iConfig } from '../../../../IO-Router/types/types';
+import { IO } from '../../../IO';
 
 let navigator: (path: `/${string}`) => void;
 let NextHistoryEvent: () => void;
 let PreviousHistoryEvent: () => void;
+let getBreadcrumbs: () => IO;
 
 export function navigate(path: `/${string}`) {
     if (navigator) {
@@ -21,6 +23,10 @@ export function HistoryNavigate(vector: 'next' | 'back') {
     }
 }
 
+export function breadcrumbs(): IO {
+    return getBreadcrumbs();
+}
+
 export function ioInit(config: iConfig) {
     const router = new IORouter({
         root: config.root,
@@ -35,6 +41,7 @@ export function ioInit(config: iConfig) {
     navigator = router.navigate;
     NextHistoryEvent = router.HistoryNext;
     PreviousHistoryEvent = router.HistoryPrevious;
+    getBreadcrumbs = router.breadcrumbs();
 
     router.init();
 }
