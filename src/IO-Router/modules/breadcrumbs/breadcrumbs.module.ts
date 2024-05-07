@@ -2,21 +2,12 @@ import { IO } from '../../../IO/IO';
 import { tag } from '../../../IO/libs/types/types.io';
 import { map } from '../../../IO/utils/map';
 import { path, routerMap } from '../../types/types';
+import { BreadcrumbItems } from './breadcrumb-items';
 
 interface iBreadcrumbsModule {
     routing: routerMap;
     domain: string;
     navigate: (path: path) => void;
-}
-
-export class BreadcrumbItems {
-    public routePath: string;
-    public routeList: string[];
-
-    constructor(params: { routePath: string; routeList: string[] }) {
-        this.routePath = params.routePath;
-        this.routeList = params.routeList;
-    }
 }
 
 export class BreadcrumbsModule {
@@ -31,6 +22,7 @@ export class BreadcrumbsModule {
     }
 
     private getRoutes() {
+        // convert location href to BreadcrumbItems object for destruct href to link items
         const preRoutes = window.location.href.replace(this._domain, '');
         const routes = preRoutes.length === 1 ? [''] : preRoutes.split('/');
         return new BreadcrumbItems({ routePath: routes.join('/'), routeList: routes });
@@ -39,6 +31,7 @@ export class BreadcrumbsModule {
     public breadcrumbs() {
         const routeItem = this.getRoutes();
 
+        // create IO items from BreadcrumbItems
         const routesComponents = map(routeItem.routeList, (params, ind) => {
             return this.item(params, (ind as number) + 1 !== routeItem.routeList.length);
         });
@@ -57,6 +50,7 @@ export class BreadcrumbsModule {
         io.text = name || 'main';
 
         if (isLink) {
+            // conditional href attribute for prevent clickable element if this select on current page
             io.atr = { href: `/${name}` };
         }
 
