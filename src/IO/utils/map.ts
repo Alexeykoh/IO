@@ -1,8 +1,8 @@
 import { IO } from '../IO';
 
-export function map<T>(params: T[], template: (params: T) => IO) {
-    const newList = params.map((el) => {
-        return () => template(el);
+export function map<T>(params: T[], template: (params: T, ind?: number) => IO) {
+    const newList = params.map((el, ind) => {
+        return () => template(el, ind);
     });
     return newList;
 }
