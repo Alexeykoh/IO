@@ -1,4 +1,4 @@
-import { ioInit } from '../../IO-Root/root.io';
+import { init } from '../../IO-Root/root.io';
 import { iConfig } from '../../IO-Router/types/types';
 import { ioRoutes } from './routes.io';
 import { Layout } from './shared/layout';
@@ -16,5 +16,5 @@ export const rootConfig: iConfig = {
 };
 
 export function AppRouter() {
-    ioInit(rootConfig);
+    init(rootConfig);
 }
