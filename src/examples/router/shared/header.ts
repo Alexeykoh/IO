@@ -1,5 +1,5 @@
+import { HistoryNavigate, breadcrumbs } from '../../../IO-Root/root.io';
 import { IO } from '../../../IO/IO';
-import { HistoryNavigate, breadcrumbs } from '../../../IO/libs/modules/root/root.io';
 import { tag } from '../../../IO/libs/types/types.io';
 import { Title } from './UI/title';
 

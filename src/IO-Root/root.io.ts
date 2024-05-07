@@ -1,6 +1,6 @@
-import { IORouter } from '../../../../IO-Router/router.io';
-import { iConfig } from '../../../../IO-Router/types/types';
-import { IO } from '../../../IO';
+import { IORouter } from '../IO-Router/router.io';
+import { iConfig } from '../IO-Router/types/types';
+import { IO } from '../IO/IO';
 
 let navigator: (path: `/${string}`) => void;
 let NextHistoryEvent: () => void;
