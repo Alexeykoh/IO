@@ -138,9 +138,7 @@ export class IORouter {
         }
         const { isPrivate, redirectTo } = routeNode.params;
         if (isPrivate) {
-            console.log('isPrivate');
             const authResult = this._authMethod();
-            console.log('this.authMethod()', this._authMethod());
             if (!authResult) {
                 this.navigate('/auth');
             }
