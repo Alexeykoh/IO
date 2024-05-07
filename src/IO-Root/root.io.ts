@@ -1,18 +1,24 @@
-import { IORouter } from '../../../../IO-Router/router.io';
-import { iConfig } from '../../../../IO-Router/types/types';
+import { IORouter } from '../IO-Router/router.io';
+import { iConfig } from '../IO-Router/types/types';
+import { IO } from '../IO/IO';
 
+// declare global variable
 let navigator: (path: `/${string}`) => void;
 let NextHistoryEvent: () => void;
 let PreviousHistoryEvent: () => void;
+let getBreadcrumbs: () => IO;
 
-export function navigate(path: `/${string}`) {
+function navigate(path: `/${string}`) {
+    // global navigate
     if (navigator) {
         navigator(path);
     } else {
         throw new Error('"navigator" does not exist!');
     }
 }
-export function HistoryNavigate(vector: 'next' | 'back') {
+
+function history(vector: 'next' | 'back') {
+    // global history
     if (vector == 'back') {
         PreviousHistoryEvent();
     }
@@ -21,7 +27,13 @@ export function HistoryNavigate(vector: 'next' | 'back') {
     }
 }
 
-export function ioInit(config: iConfig) {
+function breadcrumbs(): IO {
+    // global breadcrumbs
+    return getBreadcrumbs();
+}
+
+// export init
+export function init(config: iConfig) {
     const router = new IORouter({
         root: config.root,
         domain: config.domain,
@@ -35,6 +47,11 @@ export function ioInit(config: iConfig) {
     navigator = router.navigate;
     NextHistoryEvent = router.HistoryNext;
     PreviousHistoryEvent = router.HistoryPrevious;
+    getBreadcrumbs = router.breadcrumbs();
 
+    // insert init
     router.init();
 }
+
+// export modules
+export { history as HistoryNavigate, breadcrumbs, navigate };

@@ -13,7 +13,6 @@ export function Form(addTodo: (text: string) => void) {
     io.events = {
         submit: (e) => {
             e?.preventDefault();
-            console.log(input());
             if (input()) {
                 addTodo(input());
             }

@@ -1,11 +1,16 @@
+import { HistoryNavigate, breadcrumbs } from '../../../IO-Root/root.io';
 import { IO } from '../../../IO/IO';
-import { HistoryNavigate } from '../../../IO/libs/modules/root/root.io';
 import { tag } from '../../../IO/libs/types/types.io';
 import { Title } from './UI/title';
 
 export function Header() {
     const io = new IO(tag.HEADER);
-    io.components = [() => Title('eCommerce Store'), () => NavigateButton('back'), () => NavigateButton('next')];
+    io.components = [
+        () => Title('eCommerce Store'),
+        () => NavigateButton('back'),
+        () => NavigateButton('next'),
+        () => breadcrumbs(),
+    ];
     return io;
 }
 
