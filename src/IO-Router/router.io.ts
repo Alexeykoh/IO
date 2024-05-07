@@ -1,4 +1,5 @@
 import { IO } from '../IO/IO';
+import { BreadcrumbsModule } from './modules/breadcrumbs/breadcrumbs.module';
 import { Page404 } from './pages/404/404.page';
 import { IOAuthPage } from './pages/authentication/auth-page/auth-page.io';
 import { Route } from './routes/route.io';
@@ -9,13 +10,18 @@ export class IORouter {
     private readonly _routes: iRoutes; // Array of routes
     private readonly _domain: string; // Domain of the application
     private readonly _authMethod: () => boolean; // Method for authentication
-    private readonly _authPage: Route; // Route for authentication
     private readonly _root: HTMLElement; // Root element to render content
     private readonly _href: path; // Current path
     private readonly _routesMap: routerMap; // Map of routes
-    private readonly _404Page: Route; // Route for 404 page
-    private readonly _layout: layoutTemplate; // Layout function
     public _middleware: middleware; // Middleware function
+
+    // pages templates
+    private readonly _layout: layoutTemplate; // Layout function
+    private readonly _authPage: Route; // Route for authentication
+    private readonly _404Page: Route; // Route for 404 page
+
+    // modules
+    private _breadcrumbModule: BreadcrumbsModule;
 
     // Constructor for the IORouter class
     constructor(params: iIORouter) {
@@ -43,6 +49,13 @@ export class IORouter {
 
         // Add routes to the map and load the current page
         this.addRoutesToMap();
+
+        // modules
+        this._breadcrumbModule = new BreadcrumbsModule({
+            routing: this._routesMap,
+            domain: this._domain,
+            navigate: this.navigate.bind(this),
+        });
     }
 
     // Getters
@@ -125,9 +138,7 @@ export class IORouter {
         }
         const { isPrivate, redirectTo } = routeNode.params;
         if (isPrivate) {
-            console.log('isPrivate');
             const authResult = this._authMethod();
-            console.log('this.authMethod()', this._authMethod());
             if (!authResult) {
                 this.navigate('/auth');
             }
@@ -185,5 +196,9 @@ export class IORouter {
     }
     public HistoryPrevious() {
         history.back();
+    }
+
+    public breadcrumbs() {
+        return this._breadcrumbModule.breadcrumbs.bind(this._breadcrumbModule);
     }
 }
