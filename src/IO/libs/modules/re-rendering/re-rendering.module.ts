@@ -22,7 +22,10 @@ export class ReRendering {
         const componentInDOM = getRef(this._node.elementID);
 
         // recursive mutate
-        this._hydration.mutate(this._node, componentInDOM);
-        // this._hydration.hydrate(this._node);
+        if (this._node && componentInDOM) {
+            this._hydration.mutate(this._node, componentInDOM);
+        } else {
+            console.warn('componentInDOM not found!');
+        }
     }
 }
