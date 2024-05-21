@@ -52,6 +52,7 @@ export enum tag {
     IFRAME = 'iframe',
     CANVAS = 'canvas',
     SVG = 'svg',
+    PATH = 'path',
 }
 
 export type IOArray = (() => IO)[];

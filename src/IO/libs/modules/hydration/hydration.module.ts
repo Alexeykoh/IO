@@ -2,15 +2,34 @@ import { IO } from '../../../IO';
 import { _atr, _classList, _components, _events, _id, _tag, _text } from '../../types/types.io';
 
 export class Hydration {
+    private tagSwitcher(tag: _tag) {
+        switch (tag) {
+            case 'svg':
+                return this.createSVG(tag);
+            case 'path':
+                return this.createSVG(tag);
+            default:
+                return this.create(tag);
+        }
+    }
+
     // Create and return a new HTMLElement
     private create(tag: _tag): HTMLElement {
         const newElement: HTMLElement = document.createElement(tag);
         return newElement;
     }
 
+    private createSVG(tag: _tag): HTMLElement {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        return svg as unknown as HTMLElement;
+    }
+
     // Method to set class list for an HTML element
     private setClassList(element: HTMLElement, classList: _classList | undefined): void {
-        element.className = '';
+        if (element.tagName !== 'svg' && element.tagName !== 'path') {
+            element.className = '';
+        }
 
         classList?.forEach((el) => {
             let _class: string | undefined = typeof el !== 'function' ? el : el();
@@ -89,7 +108,7 @@ export class Hydration {
     // Main method to hydrate an HTML element with provided props
     public hydrate(_node: IO): HTMLElement {
         const { classList, id, events, text, components, atr, tag, elementID } = _node;
-        const element = this.create(tag);
+        const element = this.tagSwitcher(tag);
 
         // Set properties for the element
         this.setComponentId(element, elementID);

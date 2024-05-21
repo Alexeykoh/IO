@@ -1,22 +1,20 @@
-import { HistoryNavigate, breadcrumbs } from '../../../IO-Root/root.io';
+import { breadcrumbs, navigate } from '../../../IO-Root/root.io';
 import { IO } from '../../../IO/IO';
 import { tag } from '../../../IO/libs/types/types.io';
+import { LogoIcon } from './UI/logo-icon';
 import { Title } from './UI/title';
 
 export function Header() {
     const io = new IO(tag.HEADER);
-    io.components = [
-        () => Title('eCommerce Store'),
-        () => NavigateButton('back'),
-        () => NavigateButton('next'),
-        () => breadcrumbs(),
-    ];
+    io.components = [Logo, () => breadcrumbs()];
     return io;
 }
 
-function NavigateButton(vector: 'back' | 'next') {
-    const io = new IO(tag.BUTTON);
-    io.text = `to ${vector}`;
-    io.events = { click: () => HistoryNavigate(vector) };
+function Logo() {
+    const io = new IO(tag.DIV);
+    io.events = { click: () => navigate('/products') };
+    io.classList = ['logo'];
+    io.atr = { style: 'display: flex; align-items: center; gap: 8px;' };
+    io.components = [LogoIcon, () => Title('eCommerce Store')];
     return io;
 }
