@@ -44,7 +44,7 @@ export function init(config: iConfig) {
     });
 
     // insert navigate
-    navigator = router.navigate;
+    navigator = router.navigate.bind(router);
     NextHistoryEvent = router.HistoryNext;
     PreviousHistoryEvent = router.HistoryPrevious;
     getBreadcrumbs = router.breadcrumbs();

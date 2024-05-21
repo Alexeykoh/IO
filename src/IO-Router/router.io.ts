@@ -61,6 +61,10 @@ export class IORouter {
             domain: this._domain,
             navigate: this.navigate.bind(this),
         });
+        window.addEventListener('popstate', () => {
+            const href = this.editPath(window.location.href);
+            this.loadPage(href);
+        });
     }
 
     // Getters
@@ -133,6 +137,7 @@ export class IORouter {
         } else {
             ioElement = ioNode.render();
         }
+        this._root.innerHTML = '';
         this._root.appendChild(ioElement);
     }
 
@@ -171,6 +176,7 @@ export class IORouter {
                 if (routeNode) {
                     const ioNode = routeNode.io(path.split('/')[2]);
                     document.title = routeNode.name;
+
                     this.middleware(routeNode, () => {
                         this.renderPage(ioNode);
                     });
@@ -190,7 +196,7 @@ export class IORouter {
 
     // Public method to navigate to a path
     public navigate(path: path) {
-        window.location.href = path;
+        window.history.pushState('', '', path);
         this.loadPage(path);
     }
 
