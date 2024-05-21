@@ -116,10 +116,18 @@ export class Hydration {
             componentChildren = components.map((el) => el());
         }
 
-        // children count declaration
+        // Set children count declaration
         const ioChildrenCount = componentChildren.length;
         const elementChildrenCount = _element.children.length;
         const maxChildrenCount = Math.max(ioChildrenCount, elementChildrenCount);
+
+        // Set self properties for the element
+        this.setClassList(_element, _node.classList);
+        this.setID(_element, _node.id);
+        this.setText(_element, _node.text);
+
+        // Set self attributes for the element
+        this.setAtr(_element, _node.atr);
 
         if (ioChildrenCount === elementChildrenCount) {
             // children iteration if the number of children is the same

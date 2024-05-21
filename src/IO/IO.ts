@@ -111,7 +111,7 @@ export class IO {
     public state<T>(init: T, isUpdate: boolean = true) {
         return this._testStateModule.state(init, isUpdate);
     }
-    public stateQuery<T>(init: T, promise: Promise<T>, callback?: iStateQueryCallbacks<T>) {
+    public stateQuery<T>(init: T | null, promise: Promise<T>, callback?: iStateQueryCallbacks<T>) {
         return this._testStateQueryModule.stateQuery(init, promise, callback);
     }
     public stream<T>() {

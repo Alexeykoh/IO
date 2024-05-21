@@ -6,7 +6,7 @@ export type path = `/${string}`;
 export type iRoutes = iRoute[];
 export type routerMap = Map<string, Route>;
 export type routeIO = (data: string) => IO;
-export type domain = `http://${string}` | `https://${string}`;
+export type domain = string; //`http://${string}` | `https://${string}`;
 export type middleware = ((data: iMiddlewareData) => void) | undefined;
 export type layoutTemplate = ((children: (() => IO)[]) => IO) | undefined;
 
@@ -28,7 +28,7 @@ export interface iIORouter {
     domain: domain;
     routes: iRoutes;
     root?: HTMLElement;
-    auth?: () => boolean;
+    auth?: () => Promise<boolean>;
     middleware?: (data: iMiddlewareData) => void;
     layout?: layoutTemplate;
 }
@@ -43,7 +43,7 @@ export interface iConfig {
     root: HTMLElement;
     domain: domain;
     routes: iRoutes;
-    auth?: (() => boolean) | undefined;
+    auth?: (() => Promise<boolean>) | undefined;
     middleware?: middleware;
     layout?: layoutTemplate;
 }

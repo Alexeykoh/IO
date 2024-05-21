@@ -22,7 +22,7 @@ export class StateQueryModule {
 
     public stateQuery<stateType>(
         // Query state asynchronously
-        init: stateType,
+        init: stateType | null,
         queryPromise: Promise<stateType>,
         callback?: iStateQueryCallbacks<stateType>
     ) {

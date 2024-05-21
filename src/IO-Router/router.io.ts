@@ -9,7 +9,7 @@ import { iIORouter, iRoute, iRoutes, layoutTemplate, middleware, path, routeIO, 
 export class IORouter {
     private readonly _routes: iRoutes; // Array of routes
     private readonly _domain: string; // Domain of the application
-    private readonly _authMethod: () => boolean; // Method for authentication
+    private readonly _authMethod: () => Promise<boolean>; // Method for authentication
     private readonly _root: HTMLElement; // Root element to render content
     private readonly _href: path; // Current path
     private readonly _routesMap: routerMap; // Map of routes
@@ -38,7 +38,12 @@ export class IORouter {
 
         // Initialize authentication route and method
         this._authPage = new Route(() => IOAuthPage(), '/auth', {}, 'io-auth');
-        this._authMethod = params.auth || (() => false);
+        this._authMethod =
+            params.auth ||
+            (() =>
+                new Promise((resolve) => {
+                    resolve(true);
+                }));
 
         // Middleware function
         this._middleware = params?.middleware;
@@ -132,16 +137,18 @@ export class IORouter {
     }
 
     // Private method for middleware
-    private middleware(routeNode: Route, ioNode: IO, callback: () => void) {
+    private middleware(routeNode: Route, callback: () => void) {
         if (this._middleware) {
             this._middleware({ domain: this._domain, routes: this.routes, href: this.href });
         }
         const { isPrivate, redirectTo } = routeNode.params;
         if (isPrivate) {
             const authResult = this._authMethod();
-            if (!authResult) {
-                this.navigate('/auth');
-            }
+            authResult.then((res) => {
+                if (!res) {
+                    this.navigate('/auth');
+                }
+            });
         }
         if (redirectTo) {
             this.navigate(redirectTo);
@@ -164,7 +171,7 @@ export class IORouter {
                 if (routeNode) {
                     const ioNode = routeNode.io(path.split('/')[2]);
                     document.title = routeNode.name;
-                    this.middleware(routeNode, ioNode, () => {
+                    this.middleware(routeNode, () => {
                         this.renderPage(ioNode);
                     });
                 }
@@ -175,7 +182,7 @@ export class IORouter {
             const routeNode = page;
             const ioNode = routeNode.io('');
             document.title = routeNode.name;
-            this.middleware(routeNode, ioNode, () => {
+            this.middleware(routeNode, () => {
                 this.renderPage(ioNode);
             });
         }
