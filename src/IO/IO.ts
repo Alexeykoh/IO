@@ -119,9 +119,10 @@ export class IO {
     }
 
     // root methods
-    public render(): HTMLElement {
+    public render(): Promise<HTMLElement> {
         // Render the IO element
         // Hydrate the element with props and return
+
         return this._hydration.hydrate(this);
     }
 

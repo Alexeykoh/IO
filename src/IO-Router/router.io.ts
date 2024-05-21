@@ -133,12 +133,20 @@ export class IORouter {
         this._root.innerHTML = '';
         let ioElement: HTMLElement;
         if (this._layout) {
-            ioElement = this._layout([() => ioNode]).render();
+            this._layout([() => ioNode])
+                .render()
+                .then((data) => {
+                    ioElement = data;
+                    this._root.innerHTML = '';
+                    this._root.appendChild(ioElement);
+                });
         } else {
-            ioElement = ioNode.render();
+            ioNode.render().then((data) => {
+                ioElement = data;
+                this._root.innerHTML = '';
+                this._root.appendChild(ioElement);
+            });
         }
-        this._root.innerHTML = '';
-        this._root.appendChild(ioElement);
     }
 
     // Private method for middleware

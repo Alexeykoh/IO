@@ -51,9 +51,15 @@ export class IORoot<routerLink> {
         if (this.layout) {
             const layout = this.layout(element); // Apply layout if available
             this.layoutComponent = layout;
-            this.rootElement.appendChild(layout.render()); // Render the layout
+            layout.render().then((data) => {
+                this.rootElement.appendChild(data); // Render the layout
+            });
         } else {
-            this.rootElement.appendChild(element().render()); // Render the component directly
+            element()
+                .render()
+                .then((data) => {
+                    this.rootElement.appendChild(data); // Render the component directly
+                });
         }
     }
 

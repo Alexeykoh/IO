@@ -19,13 +19,10 @@ export class ReRendering {
 
     public update(): void {
         // Get the component in the DOM using its element ID
-        const componentInDOM = getRef(this._node.elementID);
-
-        // recursive mutate
-        if (this._node && componentInDOM) {
-            this._hydration.mutate(this._node, componentInDOM);
-        } else {
-            console.warn('componentInDOM not found!');
-        }
+        getRef(this._node.elementID).then((componentInDOM) => {
+            if (this._node && componentInDOM) {
+                this._hydration.mutate(this._node, componentInDOM);
+            }
+        });
     }
 }

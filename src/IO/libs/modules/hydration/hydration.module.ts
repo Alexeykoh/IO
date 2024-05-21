@@ -63,12 +63,16 @@ export class Hydration {
         if (typeof components === 'function') {
             components().forEach((el: () => IO) => {
                 const component = el();
-                element.appendChild(component.render());
+                component.render().then((data) => {
+                    element.appendChild(data);
+                });
             });
         } else {
             components?.forEach((el: () => IO) => {
                 const component = el();
-                element.appendChild(component.render());
+                component.render().then((data) => {
+                    element.appendChild(data);
+                });
             });
         }
     }
@@ -106,7 +110,7 @@ export class Hydration {
     }
 
     // Main method to hydrate an HTML element with provided props
-    public hydrate(_node: IO): HTMLElement {
+    public async hydrate(_node: IO): Promise<HTMLElement> {
         const { classList, id, events, text, components, atr, tag, elementID } = _node;
         const element = this.tagSwitcher(tag);
 
@@ -123,7 +127,7 @@ export class Hydration {
         return element;
     }
 
-    public mutate(_node: IO, _element: HTMLElement): HTMLElement {
+    public async mutate(_node: IO, _element: HTMLElement): Promise<HTMLElement> {
         const { components } = _node;
 
         // declare children
@@ -155,7 +159,9 @@ export class Hydration {
                 const IOChild: IO = componentChildren[i];
                 const NodeElement: HTMLElement = childNodes[i] as HTMLElement;
                 if (!NodeElement) {
-                    _element.appendChild(IOChild.render());
+                    IOChild.render().then((data) => {
+                        _element.appendChild(data);
+                    });
                     continue;
                 }
                 if (!IOChild) {
@@ -176,7 +182,9 @@ export class Hydration {
             }
         } else {
             // render all array of children
-            _element?.replaceWith(_node.render());
+            _node.render().then((data) => {
+                _element?.replaceWith(data);
+            });
         }
 
         // return

@@ -39,5 +39,9 @@ function Todo() {
 
 // init App
 export function AppTodo() {
-    document.body.appendChild(Todo().render());
+    Todo()
+        .render()
+        .then((data) => {
+            document.body.appendChild(data);
+        });
 }
