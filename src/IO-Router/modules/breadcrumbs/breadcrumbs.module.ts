@@ -1,8 +1,8 @@
+import { navigate } from '../../../IO-Root/root.io';
 import { IO } from '../../../IO/IO';
 import { tag } from '../../../IO/libs/types/types.io';
 import { map } from '../../../IO/utils/map';
 import { path, routerMap } from '../../types/types';
-import { BreadcrumbItems } from './breadcrumb-items';
 
 interface iBreadcrumbsModule {
     routing: routerMap;
@@ -11,47 +11,62 @@ interface iBreadcrumbsModule {
 }
 
 export class BreadcrumbsModule {
-    private _routing: routerMap;
     private _domain: string;
-    private _navigate: (path: path) => void;
 
-    constructor({ routing, domain, navigate }: iBreadcrumbsModule) {
-        this._routing = routing;
+    constructor({ domain }: iBreadcrumbsModule) {
         this._domain = domain;
-        this._navigate = navigate;
     }
 
     private getRoutes() {
         // convert location href to BreadcrumbItems object for destruct href to link items
-        const preRoutes = window.location.href.replace(this._domain, '');
-        const routes = preRoutes.length === 1 ? [''] : preRoutes.split('/');
-        return new BreadcrumbItems({ routePath: routes.join('/'), routeList: routes });
+        const routes: { slug: string; link: string }[] = [];
+        const link = window.location.href.replace(this._domain, '');
+        link.split('/').reduce((a, b) => {
+            routes.push({ slug: b, link: a + b + '/' });
+            return a + b + '/';
+        }, '');
+
+        return routes;
     }
 
     public breadcrumbs() {
         const routeItem = this.getRoutes();
 
-        // create IO items from BreadcrumbItems
-        const routesComponents = map(routeItem.routeList, (params, ind) => {
-            return this.item(params, (ind as number) + 1 !== routeItem.routeList.length);
-        });
-        const io = new IO(tag.SECTION);
+        const routesComponents = map(routeItem, (params, ind) => {
+            let name = params.slug || 'main';
+            if (params.slug.includes('?name')) {
+                const queryList = params.slug.split('?')[1].split('&');
+                const nameQuery = queryList.find((el) => el.includes('name')) as string;
+                name = nameQuery?.replace('name=', '');
+                name = decodeURIComponent(name).replace(/%20/g, ' ');
+            }
+            const link = params.link.replace(/\/$/, '') || '/';
+            const isLink = routeItem.length !== (ind as number) + 1 ? true : false;
 
+            return this.item(name, link, isLink);
+        });
+
+        const io = new IO(tag.SECTION);
         io.classList = ['breadcrumbs'];
         io.components = [...routesComponents];
-
         return io;
     }
 
-    private item(name: string, isLink: boolean) {
+    private item(name: string, link: string, isLink: boolean) {
         const io = new IO(tag.A);
 
         io.classList = ['breadcrumb--link', isLink ? 'enable' : 'disable'];
-        io.text = name || 'main';
+        io.text = name;
 
         if (isLink) {
             // conditional href attribute for prevent clickable element if this select on current page
-            io.atr = { href: `/${name}` };
+            io.atr = { href: link };
+            io.events = {
+                click: (e) => {
+                    e?.preventDefault();
+                    navigate(link as path);
+                },
+            };
         }
 
         return io;

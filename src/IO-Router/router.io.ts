@@ -1,5 +1,6 @@
 import { IO } from '../IO/IO';
 import { BreadcrumbsModule } from './modules/breadcrumbs/breadcrumbs.module';
+import { QueryParamsModule, iQueryParams } from './modules/queries/query-params';
 import { Page404 } from './pages/404/404.page';
 import { IOAuthPage } from './pages/authentication/auth-page/auth-page.io';
 import { Route } from './routes/route.io';
@@ -7,9 +8,9 @@ import { iIORouter, iRoute, iRoutes, layoutTemplate, middleware, path, routeIO, 
 
 // Define a class called IORouter
 export class IORouter {
-    private readonly _routes: iRoutes; // Array of routes
+    private readonly _routes: Promise<iRoutes>; // Array of routes
     private readonly _domain: string; // Domain of the application
-    private readonly _authMethod: () => boolean; // Method for authentication
+    private readonly _authMethod: () => Promise<boolean>; // Method for authentication
     private readonly _root: HTMLElement; // Root element to render content
     private readonly _href: path; // Current path
     private readonly _routesMap: routerMap; // Map of routes
@@ -22,6 +23,7 @@ export class IORouter {
 
     // modules
     private _breadcrumbModule: BreadcrumbsModule;
+    private _queryParamsModule: QueryParamsModule;
 
     // Constructor for the IORouter class
     constructor(params: iIORouter) {
@@ -38,7 +40,12 @@ export class IORouter {
 
         // Initialize authentication route and method
         this._authPage = new Route(() => IOAuthPage(), '/auth', {}, 'io-auth');
-        this._authMethod = params.auth || (() => false);
+        this._authMethod =
+            params.auth ||
+            (() =>
+                new Promise((resolve) => {
+                    resolve(true);
+                }));
 
         // Middleware function
         this._middleware = params?.middleware;
@@ -47,14 +54,18 @@ export class IORouter {
         this.addRootAuthRoute();
         this.addRoot404Route();
 
-        // Add routes to the map and load the current page
-        this.addRoutesToMap();
-
         // modules
         this._breadcrumbModule = new BreadcrumbsModule({
             routing: this._routesMap,
             domain: this._domain,
             navigate: this.navigate.bind(this),
+        });
+        this._queryParamsModule = new QueryParamsModule(this._domain);
+
+        // Listen for popstate
+        window.addEventListener('popstate', () => {
+            const href = this.editPath(window.location.href);
+            this.loadPage(href);
         });
     }
 
@@ -92,62 +103,82 @@ export class IORouter {
     }
 
     // Private method to add routes to the map
-    private addRoutesToMap() {
-        this._routes.forEach((route) => {
-            addRoute(route, this._routesMap);
+    private async addRoutesToMap(): Promise<routerMap> {
+        return this._routes.then((routes) => {
+            routes.forEach((route) => {
+                addRoute(route, this._routesMap);
+            });
+            function addRoute(route: iRoute, map: routerMap, parentPath?: path): routerMap {
+                let _route: path = route.path;
+                let _template: Route = new Route(route.template as routeIO, route.path, route.params || {}, route.name);
+
+                if (parentPath) {
+                    _route = parentPath + route.path;
+                }
+
+                if (_route.includes('/[id]')) {
+                    _template = new Route(route.template as routeIO, route.path, route.params || {}, route.name);
+                }
+
+                map.set(_route, _template);
+
+                if (route.includes?.length) {
+                    route.includes.forEach((childRoute) => {
+                        addRoute(childRoute, map, _route);
+                    });
+                }
+                return map;
+            }
+            return this._routesMap;
         });
-
-        function addRoute(route: iRoute, map: routerMap, parentPath?: path) {
-            let _route: path = route.path;
-            let _template: Route = new Route(route.template as routeIO, route.path, route.params || {}, route.name);
-
-            if (parentPath) {
-                _route = parentPath + route.path;
-            }
-
-            if (_route.includes('/[id]')) {
-                _template = new Route(route.template as routeIO, route.path, route.params || {}, route.name);
-            }
-
-            map.set(_route, _template);
-
-            if (route.includes?.length) {
-                route.includes.forEach((childRoute) => {
-                    addRoute(childRoute, map, _route);
-                });
-            }
-        }
     }
 
     // Private method to render the page
     private renderPage(ioNode: IO) {
-        this._root.innerHTML = '';
         let ioElement: HTMLElement;
+
         if (this._layout) {
+            const renderedLayout = this._root.querySelector('main');
             ioElement = this._layout([() => ioNode]).render();
+            if (!renderedLayout) {
+                this._root.appendChild(ioElement);
+            } else {
+                renderedLayout.replaceWith(ioElement);
+            }
         } else {
             ioElement = ioNode.render();
+            this._root.appendChild(ioElement);
         }
-        this._root.appendChild(ioElement);
     }
 
     // Private method for middleware
-    private middleware(routeNode: Route, ioNode: IO, callback: () => void) {
+    private middleware(routeNode: Route, callback: () => void) {
         if (this._middleware) {
             this._middleware({ domain: this._domain, routes: this.routes, href: this.href });
+            return;
         }
         const { isPrivate, redirectTo } = routeNode.params;
         if (isPrivate) {
             const authResult = this._authMethod();
-            if (!authResult) {
-                this.navigate('/auth');
-            }
+            authResult.then((res) => {
+                if (!res) {
+                    this.navigate('/auth');
+                    return;
+                }
+            });
+        } else {
+            const authResult = this._authMethod();
+            authResult.then((res) => {
+                if (res && routeNode.path === '/auth') {
+                    this.navigate('/');
+                    return;
+                }
+            });
         }
         if (redirectTo) {
             this.navigate(redirectTo);
             return;
         }
-
         callback();
     }
 
@@ -156,15 +187,17 @@ export class IORouter {
         const page = this._routesMap.get(path);
         if (!page) {
             const arrayOfRoutes = Array.from(this._routesMap.keys());
-            if (
-                arrayOfRoutes.includes('/' + path.split('/')[1]) &&
-                arrayOfRoutes.includes('/' + path.split('/')[1] + '/[id]')
-            ) {
-                const routeNode = this._routesMap.get('/' + path.split('/')[1] + '/[id]');
+            const readyPath = '/' + path.split('/').filter(Boolean).slice(0, -1).join('/') + '/[id]';
+            if (arrayOfRoutes.includes(readyPath)) {
+                const routeNode = this._routesMap.get(readyPath);
                 if (routeNode) {
-                    const ioNode = routeNode.io(path.split('/')[2]);
+                    const pathId = path.split('/').pop() || '';
+                    const ioNode = routeNode.io(pathId);
+
                     document.title = routeNode.name;
-                    this.middleware(routeNode, ioNode, () => {
+
+                    this.middleware(routeNode, () => {
+                        // to render
                         this.renderPage(ioNode);
                     });
                 }
@@ -175,30 +208,46 @@ export class IORouter {
             const routeNode = page;
             const ioNode = routeNode.io('');
             document.title = routeNode.name;
-            this.middleware(routeNode, ioNode, () => {
+            this.middleware(routeNode, () => {
+                // to render
                 this.renderPage(ioNode);
             });
         }
     }
 
     // Public method to navigate to a path
-    public navigate(path: path) {
-        window.location.href = path;
-        this.loadPage(path);
+    public navigate(path: `/${string}`, query?: { [key: string]: string }) {
+        if (query) {
+            const queryPath: string = Object.entries(query)
+                .map(([key, value]) => `${key}=${value}`)
+                .join('&');
+            path += `?${queryPath}`;
+        }
+        window.history.pushState('', '', path);
+        this.loadPage.call(this, path);
     }
 
     public init() {
-        this.loadPage(this._href);
+        // Add routes to the map and load the current page
+        this._root.innerHTML = '';
+        this.addRoutesToMap().then(() => {
+            this.loadPage(this._href);
+        });
     }
 
-    public HistoryNext() {
-        history.forward();
-    }
-    public HistoryPrevious() {
-        history.back();
+    public history(vector: 'next' | 'back') {
+        if (vector == 'back') {
+            history.back();
+        }
+        if (vector == 'next') {
+            history.forward();
+        }
     }
 
     public breadcrumbs() {
         return this._breadcrumbModule.breadcrumbs.bind(this._breadcrumbModule);
+    }
+    public queryParams(): () => iQueryParams | null {
+        return this._queryParamsModule.queryParams.bind(this._queryParamsModule);
     }
 }

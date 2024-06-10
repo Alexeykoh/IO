@@ -9,7 +9,7 @@ export function MainPage() {
 function StreamComponent() {
     const io = new IO(tag.DIV);
     io.text = 'streamer';
-    io.stream().subscribe('123', (data) => {});
+    io.stream().subscribe('123', () => {});
     return io;
 }
 

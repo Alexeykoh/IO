@@ -34,6 +34,9 @@ export class IO {
     private _components?: _components;
     private _text?: _text;
 
+    public onRender: ((io: IO) => void) | null;
+    public onMutate: ((io: IO) => void) | null;
+
     // root
     protected elementRef: HTMLElement | null;
 
@@ -42,7 +45,7 @@ export class IO {
         this._hydration = new Hydration();
         this._testStateModule = new StateModule(this);
         this._testStateQueryModule = new StateQueryModule(this);
-        this._stream = new StreamModule(this);
+        this._stream = new StreamModule();
 
         // parameters
         this._tag = tag;
@@ -56,6 +59,10 @@ export class IO {
         // core
         this._elementID = getID(); // Generate a unique element ID
         this.elementRef = null; // Reference to the HTML element associated with this instance
+
+        // callback
+        this.onRender = null;
+        this.onMutate = null;
     }
 
     // setters
@@ -108,10 +115,10 @@ export class IO {
     }
 
     // module methods
-    public state<T>(init: T, isUpdate: boolean = true) {
-        return this._testStateModule.state(init, isUpdate);
+    public state<T>(init: T, isUpdate: boolean = true, forceRender: boolean = false) {
+        return this._testStateModule.state({ init: init, update: isUpdate, forceRender: forceRender });
     }
-    public stateQuery<T>(init: T, promise: Promise<T>, callback?: iStateQueryCallbacks<T>) {
+    public stateQuery<T>(init: T | null, promise: Promise<T>, callback?: iStateQueryCallbacks<T>) {
         return this._testStateQueryModule.stateQuery(init, promise, callback);
     }
     public stream<T>() {
@@ -128,6 +135,6 @@ export class IO {
     public forceUpdate() {
         // Force update the element
         const reRender = new ReRendering(this);
-        reRender.update();
+        reRender.update(this);
     }
 }

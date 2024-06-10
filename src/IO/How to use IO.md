@@ -1,14 +1,17 @@
 # How to use < IO /> in your project?
+
 ## Create first IO component
+
 ```typescript
 export function MyFirstComponent() {
     const io = new IO(tag.DIV);
     return io;
 }
 ```
+
 ### Parameters
 
-> Function  MyFirstComponent() return object of IO. You can add
+> Function MyFirstComponent() return object of IO. You can add
 > text, style classes, attributes, events to this component:
 
 ```typescript
@@ -21,6 +24,7 @@ export function MyFirstComponent() {
     return io;
 }
 ```
+
 ### Nested
 
 > Also, you can add nested components:
@@ -38,29 +42,30 @@ export function MyFirstComponent() {
     io.classList = ['array','of','classes']
     io.atr = {id: 'firstId'}
     io.event = {click: ()=>{console.log('I"m log on click!')}
-    
+
     // you can add clild like declaration function:
     // io.components = [NestComponent].
-	
+
 	// or like arrow function (recommended):
 	io.components = [() =>  NestComponent()];
     return io;
 }
 ```
+
 ### Add to DOM
 
-> To add in DOM you can use ".render()" method. 
+> To add in DOM you can use ".render()" method.
 > This method return HTMLElement.
 
 ```typescript
 export function MyFirstComponent() {
     const io = new IO(tag.DIV);
-    io.text = 'hello world'
+    io.text = 'hello world';
     // code ...
     return io;
 }
 
-document.body(MyFirstComponent().render())
+document.body(MyFirstComponent().render());
 ```
 
 ### Re-rendering component in DOM
@@ -101,12 +106,13 @@ export function MyFirstComponent() {
 }
 ```
 
-> To do this, we need to pass a function into the parameters that will return the value we need.  
+> To do this, we need to pass a function into the parameters that will return the value we need.
+
 ```typescript
-function getValue():string{
-	return 'new text';
+function getValue(): string {
+    return 'new text';
 }
-const value: string = getValue() // new text
+const value: string = getValue(); // new text
 ```
 
 ```typescript
@@ -119,9 +125,12 @@ export function MyFirstComponent() {
     return io;
 }
 ```
+
 > But in order for the function to return updated values to us, we carefully store their state in it.
 > To store the state and automatically update the component, we suggest using .state().
+
 #### State update
+
 ```typescript
 export function MyFirstComponentWithState() {
     const io = new IO(tag.DIV);
@@ -133,11 +142,14 @@ export function MyFirstComponentWithState() {
     return io;
 }
 ```
+
 > After calling setName(), the IO will update the component and receive the updated data from the state.
 > When a component is updated, its child components are also updated.
 
 #### Force update
+
 > ".forceUpdate()" allows you to force a component update
+
 ```typescript
 export function MyFirstComponent() {
     const io = new IO(tag.DIV);

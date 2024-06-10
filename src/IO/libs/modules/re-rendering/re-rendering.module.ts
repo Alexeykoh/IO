@@ -17,11 +17,18 @@ export class ReRendering {
         this._hydration = new Hydration();
     }
 
-    public update(): void {
+    public update(node: IO): void {
         // Get the component in the DOM using its element ID
         const componentInDOM = getRef(this._node.elementID);
 
         // recursive mutate
-        this._hydration.mutate(this._node, componentInDOM);
+        this._hydration.mutate(node, componentInDOM);
+
+        // this._hydration.hydrate(this._node);
+    }
+    public forceRender(node: IO) {
+        const componentInDOM = getRef(this._node.elementID);
+        const newElement = this._hydration.hydrate(node);
+        componentInDOM.replaceWith(newElement);
     }
 }

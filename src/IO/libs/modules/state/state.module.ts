@@ -3,6 +3,13 @@ import { getID } from '../../helpers/get-id';
 import { tGetState, tSetState } from '../../types/types.io';
 import { ReRendering } from '../re-rendering/re-rendering.module';
 
+export interface stateInterface<stateType> {
+    init: stateType;
+    update?: boolean;
+    callback?: (val: stateType) => void;
+    forceRender?: boolean;
+}
+
 export class StateModule {
     // root
     private readonly _node: IO;
@@ -20,7 +27,7 @@ export class StateModule {
         this._update = new ReRendering(this._node);
     }
 
-    public state<stateType>(init: stateType, update: boolean = true, callback?: (val: stateType) => void) {
+    public state<stateType>({ init, update, callback, forceRender }: stateInterface<stateType>) {
         // Manage state of the element
         const key = getID(); // Get unique identifier for state
         this._state.set(key, init); // Initialize state with provided initial value
@@ -36,8 +43,11 @@ export class StateModule {
             }
 
             this._state.set(key, result); // Set new value for state
-            if (update) {
-                this._update.update();
+            if (update && !forceRender) {
+                this._update.update(this._node);
+            }
+            if (forceRender) {
+                this._update.forceRender(this._node);
             }
             if (callback) {
                 callback(this._state.get(key) as stateType);

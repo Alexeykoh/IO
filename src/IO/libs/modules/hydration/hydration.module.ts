@@ -2,15 +2,34 @@ import { IO } from '../../../IO';
 import { _atr, _classList, _components, _events, _id, _tag, _text } from '../../types/types.io';
 
 export class Hydration {
+    private tagSwitcher(tag: _tag) {
+        switch (tag) {
+            case 'svg':
+                return this.createSVG(tag);
+            case 'path':
+                return this.createSVG(tag);
+            default:
+                return this.create(tag);
+        }
+    }
+
     // Create and return a new HTMLElement
     private create(tag: _tag): HTMLElement {
         const newElement: HTMLElement = document.createElement(tag);
         return newElement;
     }
+    // Create and return a new HTMLElement as SVG
+    private createSVG(tag: _tag): HTMLElement {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        return svg as unknown as HTMLElement;
+    }
 
     // Method to set class list for an HTML element
     private setClassList(element: HTMLElement, classList: _classList | undefined): void {
-        element.className = '';
+        if (element.tagName !== 'svg' && element.tagName !== 'path') {
+            element.className = '';
+        }
 
         classList?.forEach((el) => {
             let _class: string | undefined = typeof el !== 'function' ? el : el();
@@ -42,14 +61,18 @@ export class Hydration {
     // Method to set components for an HTML element
     private setComponents(element: HTMLElement, components: _components | undefined): void {
         if (typeof components === 'function') {
-            components().forEach((el: () => IO) => {
+            components().forEach((el: () => IO | null) => {
                 const component = el();
-                element.appendChild(component.render());
+                if (component) {
+                    element.appendChild(component.render());
+                }
             });
         } else {
-            components?.forEach((el: () => IO) => {
+            components?.forEach((el: () => IO | null) => {
                 const component = el();
-                element.appendChild(component.render());
+                if (component) {
+                    element.appendChild(component.render());
+                }
             });
         }
     }
@@ -89,7 +112,7 @@ export class Hydration {
     // Main method to hydrate an HTML element with provided props
     public hydrate(_node: IO): HTMLElement {
         const { classList, id, events, text, components, atr, tag, elementID } = _node;
-        const element = this.create(tag);
+        const element = this.tagSwitcher(tag);
 
         // Set properties for the element
         this.setComponentId(element, elementID);
@@ -101,39 +124,63 @@ export class Hydration {
 
         // Set attributes for the element
         this.setAtr(element, atr);
+
+        // call render
+        if (_node.onRender) {
+            _node.onRender(_node);
+        }
+
         return element;
     }
 
-    public mutate(_node: IO, _element: HTMLElement): HTMLElement {
+    public mutate(_node: IO, _element: HTMLElement): HTMLElement | undefined {
+        // Check if the node and element are defined
+        if (!_node || !_element) {
+            return;
+        }
         const { components } = _node;
 
         // declare children
         const childNodes = _element.children;
-        let componentChildren: IO[] = [];
+        let componentChildren: (IO | null)[] = [];
         if (typeof components === 'function') {
             componentChildren = components().map((el) => el());
         } else if (components) {
             componentChildren = components.map((el) => el());
         }
 
-        // children count declaration
+        // Set children count declaration
         const ioChildrenCount = componentChildren.length;
         const elementChildrenCount = _element.children.length;
         const maxChildrenCount = Math.max(ioChildrenCount, elementChildrenCount);
+
+        // Set self properties for the element
+        this.setClassList(_element, _node.classList);
+        this.setID(_element, _node.id);
+        this.setText(_element, _node.text);
+
+        // Set self attributes for the element
+        this.setAtr(_element, _node.atr);
 
         if (ioChildrenCount === elementChildrenCount) {
             // children iteration if the number of children is the same
             for (let i = 0; i < maxChildrenCount; i++) {
                 // declare children
-                const IOChild: IO = componentChildren[i];
+                const IOChild: IO | null = componentChildren[i];
                 const NodeElement: HTMLElement = childNodes[i] as HTMLElement;
+                if (!IOChild) {
+                    _element.removeChild(NodeElement);
+                    continue;
+                }
                 if (!NodeElement) {
                     _element.appendChild(IOChild.render());
                     continue;
                 }
-                if (!IOChild) {
-                    _element.removeChild(NodeElement);
-                    continue;
+
+                // Check if the tag is the same
+                if (NodeElement.tagName.toUpperCase() !== IOChild.tag.toUpperCase()) {
+                    const newElement = IOChild.render();
+                    NodeElement.replaceWith(newElement);
                 }
 
                 // Set properties for the element
@@ -150,6 +197,11 @@ export class Hydration {
         } else {
             // render all array of children
             _element?.replaceWith(_node.render());
+        }
+
+        // call mutate
+        if (_node.onMutate) {
+            _node.onMutate(_node);
         }
 
         // return

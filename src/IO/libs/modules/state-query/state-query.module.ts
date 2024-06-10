@@ -22,7 +22,7 @@ export class StateQueryModule {
 
     public stateQuery<stateType>(
         // Query state asynchronously
-        init: stateType,
+        init: stateType | null,
         queryPromise: Promise<stateType>,
         callback?: iStateQueryCallbacks<stateType>
     ) {
@@ -37,7 +37,7 @@ export class StateQueryModule {
                     if (callback && callback.ok) {
                         callback.ok(res); // Execute OK callback if provided
                     }
-                    this._update.update(); // Notify state elementor for update
+                    this._update.update(this._node); // Notify state elementor for update
                 })
                 .catch((err: Error) => {
                     if (callback && callback.error) {
@@ -45,7 +45,7 @@ export class StateQueryModule {
                     }
                 })
                 .finally(() => {
-                    this._update.update(); // Notify state elementor for update
+                    this._update.update(this._node); // Notify state elementor for update
                 });
         };
         refetch(); // Initial fetch of state

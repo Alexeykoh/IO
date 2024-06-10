@@ -2,6 +2,6 @@ import { IOInput } from '../../../../../IO/components/io-input';
 import { tag } from '../../../../../IO/libs/types/types.io';
 
 export function Input() {
-    const io = new IOInput(tag.INPUT, {}, [], (data) => {});
+    const io = new IOInput(tag.INPUT, {}, [], () => {});
     return io;
 }

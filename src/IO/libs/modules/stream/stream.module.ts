@@ -1,4 +1,3 @@
-import { IO } from '../../../IO';
 import { Stream, StreamSubscriber } from '../../../utils/stream';
 
 export interface iStreamMessage {
@@ -9,12 +8,12 @@ export interface iStreamMessage {
 export const $IOStream = new Stream<iStreamMessage>();
 
 export class StreamModule {
-    private readonly _node: IO;
+    // private readonly _node: IO;
     protected readonly _$stream: Stream<iStreamMessage>;
     protected $subscriber: StreamSubscriber<iStreamMessage> | null;
 
-    constructor(node: IO) {
-        this._node = node;
+    constructor() {
+        // this._node = node;
         this._$stream = $IOStream;
         this.$subscriber = null;
     }
@@ -28,7 +27,7 @@ export class StreamModule {
                     if (effect) {
                         effect(message.data as T);
                     }
-                    this._node.forceUpdate();
+                    // this._node.forceUpdate();
                 }
             });
         };
